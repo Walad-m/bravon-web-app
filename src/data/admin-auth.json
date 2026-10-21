@@ -1,0 +1,41 @@
+{
+  "twoFactorEnabled": false,
+  "sessionMaxAgeDays": 7,
+  "securityLogs": [
+    {
+      "id": "257c258836a8",
+      "timestamp": "2026-10-20T22:01:39.413Z",
+      "action": "SUCCESSFUL_LOGIN",
+      "detail": "Authenticated with password",
+      "ip": "::1"
+    },
+    {
+      "id": "4b1bc7c1a978",
+      "timestamp": "2026-10-20T21:11:06.012Z",
+      "action": "SUCCESSFUL_LOGIN",
+      "detail": "Authenticated with password",
+      "ip": "::1"
+    },
+    {
+      "id": "39f0a64fe02b",
+      "timestamp": "2026-10-20T21:09:09.873Z",
+      "action": "SUCCESSFUL_LOGIN",
+      "detail": "Authenticated with password",
+      "ip": "::1"
+    },
+    {
+      "id": "3ffd833d5dda",
+      "timestamp": "2026-10-20T21:08:55.852Z",
+      "action": "SUCCESSFUL_LOGIN",
+      "detail": "Authenticated with password",
+      "ip": "::1"
+    },
+    {
+      "id": "46d9c99a010a",
+      "timestamp": "2026-10-20T21:08:55.773Z",
+      "action": "FAILED_LOGIN_PASSWORD",
+      "detail": "Invalid password attempted",
+      "ip": "::1"
+    }
+  ]
+}

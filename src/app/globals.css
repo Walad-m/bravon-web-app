@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Official Bravon Brand Palette — 100% Harmonized (#7C3AED Electric Violet) */
+    --bravon-purple: #7C3AED;
+    --bravon-purple-dark: #6D28D9;
+    --bravon-purple-light: #8B5CF6;
+    --bravon-purple-subtle: #F5F3FF;
+    --bravon-purple-tint: rgba(124, 58, 237, 0.08);
+    
+    --bg-white: #FFFFFF;
+    --bg-apple: #F5F5F7;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #FBFBFC;
+    
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-tertiary: #94A3B8;
+    
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-purple: rgba(124, 58, 237, 0.2);
+    
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-pill: 980px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-white);
+    color: var(--text-primary);
+    overflow-x: hidden;
+  }
+}
+
+/* Apple-style typography */
+.headline-hero {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--text-primary);
+}
+
+.headline-sub {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bravon-purple);
+}
+
+/* Apple Pill Buttons */
+.btn-apple-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--bravon-purple);
+  color: #FFFFFF !important;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 26px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.btn-apple-primary:hover {
+  background-color: var(--bravon-purple-dark);
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.28);
+}
+
+.btn-apple-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: rgba(124, 58, 237, 0.08);
+  color: var(--bravon-purple) !important;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 26px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  cursor: pointer;
+}
+
+.btn-apple-secondary:hover {
+  background-color: rgba(124, 58, 237, 0.15);
+  transform: scale(1.02);
+}
+
+.btn-apple-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--bravon-purple);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: gap 0.2s ease;
+}
+
+.btn-apple-link:hover {
+  gap: 8px;
+  text-decoration: underline;
+}
+
+/* Color toggle pills */
+.color-swatch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.color-swatch-btn.active {
+  border-color: var(--bravon-purple);
+  background: var(--bravon-purple-subtle);
+  color: var(--bravon-purple);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
