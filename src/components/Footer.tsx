@@ -96,9 +96,22 @@ export default function Footer() {
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
                 <Link href="/product" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Bravon Printer (${config.price})</Link>
-                <Link href="/design" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Design Studio (Web)</Link>
+                <Link href="/apps" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>All Apps &amp; Downloads</Link>
                 <a href="/#in-action" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Printer in Action</a>
                 <a href="/#specs" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Tech Specifications</a>
+              </div>
+            </div>
+
+            {/* Apps & Software */}
+            <div>
+              <h4 style={{ color: "#1D1D1F", fontWeight: 600, fontSize: "0.9rem", marginBottom: "14px" }}>
+                Apps &amp; Software
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
+                <a href="/downloads/Bravon_Print_1.0.0_universal.dmg" download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>macOS App (.dmg)</a>
+                <a href="/downloads/Bravon_Print_1.0.0_x64_setup.exe" download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Windows App (.exe)</a>
+                <Link href="/apps#mobile" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>iOS &amp; Android Apps</Link>
+                <Link href="/design" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Browser Web Studio</Link>
               </div>
             </div>
 
@@ -122,7 +135,7 @@ export default function Footer() {
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
                 <Link href="/shipping" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Shipping &amp; Delivery</Link>
-                <Link href="/returns" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>30-Day Money-Back Guarantee</Link>
+                <Link href="/returns" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>30-Day Money-Back</Link>
                 <Link href="/privacy" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Privacy Policy</Link>
                 <Link href="/terms" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Terms of Service</Link>
               </div>
@@ -175,8 +188,8 @@ export default function Footer() {
         }
         .footer-links-grid {
           display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 32px;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 28px;
         }
 
         @media (max-width: 820px) {

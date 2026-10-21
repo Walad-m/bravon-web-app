@@ -53,6 +53,9 @@ import {
   ArrowUp,
   ArrowDown,
   ArrowLeft,
+  Apple,
+  Monitor,
+  Smartphone,
 } from "lucide-react";
 import BravonLogo from "@/components/BravonLogo";
 import {
@@ -101,6 +104,9 @@ export default function DesignStudioPage() {
 
   // Notification Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Desktop & Mobile Apps Download Modal
+  const [showAppsModal, setShowAppsModal] = useState(false);
 
   // PrintNode Silent Printing State
   const [printNodeKey, setPrintNodeKey] = useState<string>("");
@@ -807,6 +813,28 @@ export default function DesignStudioPage() {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <button
+              type="button"
+              onClick={() => setShowAppsModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                backgroundColor: "#F1F5F9",
+                color: "#7C3AED",
+                border: "1px solid rgba(124,58,237,0.2)",
+                borderRadius: "12px",
+                padding: "4px 8px",
+                fontSize: "0.72rem",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+              title="Download Desktop & Mobile Apps"
+            >
+              <Download size={12} />
+              <span>Apps</span>
+            </button>
+
             <div
               onClick={() => setActiveView("printers")}
               style={{
@@ -993,6 +1021,33 @@ export default function DesignStudioPage() {
               </div>
             </>
           )}
+
+          {/* Desktop & Mobile Apps Quick Link */}
+          <div
+            onClick={() => setShowAppsModal(true)}
+            style={{
+              marginTop: "8px",
+              padding: isEditor ? "8px 0" : "8px 10px",
+              backgroundColor: "rgba(124, 58, 237, 0.08)",
+              borderRadius: "8px",
+              border: "1px solid rgba(124, 58, 237, 0.2)",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isEditor ? "center" : "flex-start",
+              gap: "8px",
+              color: "#7C3AED",
+              transition: "all 0.15s ease",
+            }}
+            title="Download Desktop & Mobile Apps"
+          >
+            <Download size={14} />
+            {!isEditor && (
+              <span style={{ fontSize: "0.78rem", fontWeight: 700 }}>
+                Desktop &amp; Mobile Apps
+              </span>
+            )}
+          </div>
         </div>
       </aside>
       )}
@@ -1059,6 +1114,83 @@ export default function DesignStudioPage() {
                     <Printer size={16} color={activePrinter ? "#16A34A" : "#64748B"} />
                     {activePrinter ? "Hardware Ready" : "Setup Printer"}
                   </button>
+                </div>
+              </div>
+
+              {/* Native Apps & Downloads Banner */}
+              <div
+                style={{
+                  backgroundColor: "rgba(124, 58, 237, 0.05)",
+                  border: "1px solid rgba(124, 58, 237, 0.18)",
+                  borderRadius: "14px",
+                  padding: "16px 20px",
+                  marginBottom: "28px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: "14px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "10px",
+                      backgroundColor: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      boxShadow: "0 2px 6px rgba(124, 58, 237, 0.15)",
+                    }}
+                  >
+                    <Download size={18} color="#7C3AED" />
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: "0.92rem", color: "#1D1D1F" }}>
+                      Bravon Native Apps available for Windows, macOS, iOS &amp; Android
+                    </p>
+                    <p style={{ margin: "2px 0 0", fontSize: "0.8rem", color: "#64748B" }}>
+                      Get direct high-speed USB printing on your computer or print wirelessly via Bluetooth from your phone.
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAppsModal(true)}
+                    style={{
+                      backgroundColor: "#7C3AED",
+                      color: "#FFFFFF",
+                      border: "none",
+                      borderRadius: "8px",
+                      padding: "8px 14px",
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <Download size={13} />
+                    Download Desktop / Mobile Apps
+                  </button>
+                  <Link
+                    href="/apps"
+                    target="_blank"
+                    style={{
+                      color: "#64748B",
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                      padding: "6px 10px",
+                    }}
+                  >
+                    All Apps →
+                  </Link>
                 </div>
               </div>
 
@@ -1489,6 +1621,27 @@ export default function DesignStudioPage() {
                   }}
                 >
                   <Download size={13} /> Export
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowAppsModal(true)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    backgroundColor: "rgba(124, 58, 237, 0.08)",
+                    border: "1px solid rgba(124, 58, 237, 0.25)",
+                    color: "#7C3AED",
+                    borderRadius: "6px",
+                    padding: "6px 10px",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                  title="Download Desktop & Mobile Apps"
+                >
+                  <Download size={13} /> Native Apps
                 </button>
 
                 <button
@@ -3152,6 +3305,264 @@ export default function DesignStudioPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2.5 NATIVE APPS DOWNLOAD MODAL */}
+      {showAppsModal && (
+        <div
+          onClick={() => setShowAppsModal(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(6px)",
+            WebkitBackdropFilter: "blur(6px)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: "24px",
+              maxWidth: "680px",
+              width: "100%",
+              padding: "32px",
+              boxShadow: "0 25px 60px rgba(0, 0, 0, 0.25)",
+              border: "1px solid rgba(0, 0, 0, 0.08)",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              position: "relative",
+            }}
+          >
+            {/* Modal Close Button */}
+            <button
+              type="button"
+              onClick={() => setShowAppsModal(false)}
+              style={{
+                position: "absolute",
+                top: "20px",
+                right: "20px",
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                border: "none",
+                backgroundColor: "#F1F5F9",
+                color: "#64748B",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              aria-label="Close"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Modal Header */}
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <div
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "16px",
+                  backgroundColor: "rgba(124, 58, 237, 0.1)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 12px",
+                }}
+              >
+                <Download size={26} color="#7C3AED" />
+              </div>
+              <h2 style={{ fontSize: "1.45rem", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
+                Bravon Native Apps Suite
+              </h2>
+              <p style={{ fontSize: "0.88rem", color: "#64748B", margin: 0 }}>
+                Install the native app for direct high-speed USB printing and wireless Bluetooth support.
+              </p>
+            </div>
+
+            {/* Grid of Platforms */}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "14px", marginBottom: "20px" }}>
+              {/* macOS */}
+              <div
+                style={{
+                  border: "1px solid rgba(0, 0, 0, 0.08)",
+                  borderRadius: "16px",
+                  padding: "18px 16px",
+                  backgroundColor: "#F8FAFC",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                    <Apple size={20} color="#1D1D1F" />
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "#1D1D1F" }}>macOS</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: "0 0 12px", lineHeight: 1.4 }}>
+                    Universal Binary for Apple Silicon (M1–M4) &amp; Intel. Direct USB plug &amp; play.
+                  </p>
+                </div>
+                <a
+                  href="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                  download
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    backgroundColor: "#1D1D1F",
+                    color: "#FFFFFF",
+                    borderRadius: "8px",
+                    padding: "9px 12px",
+                    fontSize: "0.82rem",
+                    fontWeight: 700,
+                    textDecoration: "none",
+                  }}
+                >
+                  <Download size={14} /> Download .dmg (12.8 MB)
+                </a>
+              </div>
+
+              {/* Windows */}
+              <div
+                style={{
+                  border: "1px solid rgba(0, 0, 0, 0.08)",
+                  borderRadius: "16px",
+                  padding: "18px 16px",
+                  backgroundColor: "#F8FAFC",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                    <Monitor size={20} color="#7C3AED" />
+                    <span style={{ fontWeight: 700, fontSize: "0.95rem", color: "#1D1D1F" }}>Windows</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: "0 0 12px", lineHeight: 1.4 }}>
+                    Windows 10 &amp; 11 (64-bit). High-speed USB direct driverless printing.
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "6px" }}>
+                  <a
+                    href="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                    download
+                    style={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "5px",
+                      backgroundColor: "#7C3AED",
+                      color: "#FFFFFF",
+                      borderRadius: "8px",
+                      padding: "9px 10px",
+                      fontSize: "0.8rem",
+                      fontWeight: 700,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <Download size={13} /> .exe (8.8 MB)
+                  </a>
+                  <a
+                    href="/downloads/Bravon_Print_1.0.0_x64_en-US.msi"
+                    download
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#FFFFFF",
+                      color: "#0F172A",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      borderRadius: "8px",
+                      padding: "9px 10px",
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                    }}
+                  >
+                    .msi
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Banner in Modal */}
+            <div
+              style={{
+                backgroundColor: "var(--bg-apple, #F5F5F7)",
+                borderRadius: "14px",
+                padding: "14px 16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: "10px",
+                marginBottom: "16px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Smartphone size={20} color="#7C3AED" />
+                <div>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: "0.88rem", color: "#1D1D1F" }}>
+                    Bravon Mobile for iOS &amp; Android
+                  </p>
+                  <p style={{ margin: "2px 0 0", fontSize: "0.76rem", color: "#64748B" }}>
+                    Bluetooth wireless label printing straight from your phone or tablet.
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <a
+                  href="/downloads/Bravon_Print_Android.apk"
+                  download
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    color: "#0F172A",
+                    border: "1px solid rgba(0,0,0,0.12)",
+                    borderRadius: "6px",
+                    padding: "6px 10px",
+                    fontSize: "0.78rem",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  <Download size={12} /> Android APK
+                </a>
+              </div>
+            </div>
+
+            <div style={{ textAlign: "center", paddingTop: "8px" }}>
+              <Link
+                href="/apps"
+                target="_blank"
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#7C3AED",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                View full platform guide &amp; system requirements <ExternalLink size={13} />
+              </Link>
             </div>
           </div>
         </div>

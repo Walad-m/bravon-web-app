@@ -7,7 +7,12 @@ import {
   Shield,
   RotateCcw,
   Truck,
-  CheckCircle2
+  CheckCircle2,
+  Monitor,
+  Smartphone,
+  Globe,
+  Apple,
+  Download
 } from "lucide-react";
 import { useSiteConfig } from "@/context/ConfigContext";
 
@@ -776,7 +781,280 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. PLATFORMS & CARRIERS MARQUEE */}
+      {/* 6. SOFTWARE ECOSYSTEM — DESKTOP, MOBILE & BROWSER */}
+      <section
+        id="software"
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto 90px",
+          padding: "0 16px",
+        }}
+      >
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <span className="eyebrow" style={{ marginBottom: "8px", display: "block" }}>
+            Software Ecosystem
+          </span>
+          <h2 className="section-title-responsive" style={{ fontWeight: 700, letterSpacing: "-0.025em", marginBottom: "14px", color: "#1D1D1F" }}>
+            Native apps for macOS, Windows, iOS &amp; Android.
+          </h2>
+          <p style={{ color: "var(--text-secondary)", fontSize: "1.05rem", maxWidth: "680px", margin: "0 auto" }}>
+            Seamlessly print shipping labels, custom barcodes, and retail tags from your desk, warehouse, or phone. Free companion software included with every Bravon printer.
+          </p>
+        </div>
+
+        {/* 2 Ecosystem Pillars Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.15fr 1fr",
+            gap: "28px",
+            marginBottom: "28px",
+          }}
+          className="software-section-grid"
+        >
+          {/* Card 1: Desktop Suite (Mac & Windows) */}
+          <div
+            style={{
+              backgroundColor: "var(--bg-apple)",
+              borderRadius: "28px",
+              padding: "36px 32px",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "10px", backgroundColor: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,0,0,0.08)" }}>
+                    <Monitor size={20} color="var(--bravon-purple)" />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#1D1D1F", margin: 0 }}>
+                      Bravon Desktop Studio
+                    </h3>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>
+                      macOS (Universal) &amp; Windows 10/11
+                    </p>
+                  </div>
+                </div>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#10B981", backgroundColor: "rgba(16,185,129,0.12)", padding: "4px 10px", borderRadius: "980px" }}>
+                  v1.0.0 Stable
+                </span>
+              </div>
+
+              <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "20px" }}>
+                Direct USB high-speed communication with zero driver lag. Includes batch spreadsheet importing, custom canvas layout, and 1-click test printing.
+              </p>
+
+              {/* Real Desktop Screenshot */}
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "16/9",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  marginBottom: "24px",
+                }}
+              >
+                <Image
+                  src="/bravon-desktop-dashboard.png"
+                  alt="Bravon Desktop Studio for Windows and Mac"
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
+            </div>
+
+            {/* Download Quick Actions */}
+            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+              <a
+                href="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                download
+                className="btn-apple-primary"
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  padding: "12px 18px",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Apple size={16} /> macOS (.dmg)
+              </a>
+              <a
+                href="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                download
+                className="btn-apple-secondary"
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  padding: "12px 18px",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <Monitor size={16} /> Windows (.exe)
+              </a>
+            </div>
+          </div>
+
+          {/* Card 2: Mobile App (iOS & Android) */}
+          <div
+            style={{
+              backgroundColor: "var(--bg-apple)",
+              borderRadius: "28px",
+              padding: "36px 32px",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "10px", backgroundColor: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(0,0,0,0.08)" }}>
+                    <Smartphone size={20} color="var(--bravon-purple)" />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#1D1D1F", margin: 0 }}>
+                      Bravon Mobile
+                    </h3>
+                    <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>
+                      iPhone, iPad &amp; Android
+                    </p>
+                  </div>
+                </div>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--bravon-purple)", backgroundColor: "var(--bravon-purple-subtle)", padding: "4px 10px", borderRadius: "980px" }}>
+                  Bluetooth Wireless
+                </span>
+              </div>
+
+              <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "20px" }}>
+                Wirelessly print on the go via Bluetooth BLE. Crop shipping PDF waybills, scan barcodes with your camera, and batch-print from spreadsheets.
+              </p>
+
+              {/* Mobile Mockup Preview */}
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "150px",
+                    height: "250px",
+                    borderRadius: "18px",
+                    overflow: "hidden",
+                    boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                    border: "3px solid #1D1D1F",
+                  }}
+                >
+                  <Image
+                    src="/bravon-mobile-home.jpg"
+                    alt="Bravon Mobile App for iOS & Android"
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Link */}
+            <Link
+              href="/apps#mobile"
+              className="btn-apple-secondary"
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                padding: "12px 18px",
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+            >
+              Get Mobile App (iOS / Android) <ArrowRight size={15} />
+            </Link>
+          </div>
+        </div>
+
+        {/* Browser Studio Banner Card */}
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: "24px",
+            border: "1px solid rgba(0, 0, 0, 0.08)",
+            padding: "24px 32px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "16px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.03)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "12px", backgroundColor: "var(--bg-apple)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Globe size={22} color="var(--bravon-purple)" />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: "1.05rem", color: "#1D1D1F" }}>
+                Prefer to design in your browser with zero installation?
+              </p>
+              <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                Launch the Bravon Web Studio directly in Chrome, Safari, Edge, or Firefox.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+            <Link
+              href="/design"
+              className="btn-apple-primary"
+              style={{
+                padding: "10px 20px",
+                fontSize: "0.9rem",
+                fontWeight: 600,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+            >
+              Open Web Studio <ArrowRight size={14} />
+            </Link>
+            <Link
+              href="/apps"
+              style={{
+                padding: "10px 16px",
+                fontSize: "0.88rem",
+                fontWeight: 600,
+                color: "var(--bravon-purple)",
+                textDecoration: "none",
+              }}
+            >
+              View All Apps &amp; Downloads →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. PLATFORMS & CARRIERS MARQUEE */}
       <section
         style={{
           backgroundColor: "var(--bg-apple)",
@@ -945,6 +1223,10 @@ export default function HomePage() {
           }
           .specs-table-container {
             padding: 28px 16px !important;
+          }
+          .software-section-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
           }
           .box-items-grid {
             grid-template-columns: repeat(3, 1fr) !important;
