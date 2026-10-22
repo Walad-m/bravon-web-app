@@ -17,6 +17,7 @@ import {
 import { useSiteConfig } from "@/context/ConfigContext";
 import IPhoneMockup from "@/components/IPhoneMockup";
 import BrowserMockup from "@/components/BrowserMockup";
+import DesktopAppMockup from "@/components/DesktopAppMockup";
 
 export default function AppsPage() {
   const { config } = useSiteConfig();
@@ -40,18 +41,6 @@ export default function AppsPage() {
             <span>/</span>
             <span style={{ color: "#1D1D1F", fontWeight: 600 }}>Apps & Software Suite</span>
           </div>
-          <span
-            style={{
-              fontSize: "0.82rem",
-              color: "var(--bravon-purple)",
-              backgroundColor: "var(--bravon-purple-subtle)",
-              padding: "4px 10px",
-              borderRadius: "980px",
-              fontWeight: 600,
-            }}
-          >
-            v1.0.0 Stable Release
-          </span>
         </div>
       </div>
 
@@ -186,38 +175,15 @@ export default function AppsPage() {
                     </p>
                   </div>
                 </div>
-                <span
-                  style={{
-                    backgroundColor: "#10B981",
-                    color: "#FFFFFF",
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    padding: "4px 10px",
-                    borderRadius: "980px",
-                  }}
-                >
-                  v1.0.0 Live
-                </span>
               </div>
 
               {/* App Screenshot Preview */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16/9",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  marginBottom: "20px",
-                  boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                }}
-              >
-                <Image
-                  src="/bravon-desktop-dashboard.png"
+              <div style={{ marginBottom: "22px" }}>
+                <DesktopAppMockup
+                  os="mac"
+                  src="/bravon-desktop-dashboard-mac.png"
                   alt="Bravon Print for Mac Dashboard"
-                  fill
-                  style={{ objectFit: "cover" }}
+                  title="Bravon Print Studio"
                 />
               </div>
 
@@ -305,38 +271,15 @@ export default function AppsPage() {
                     </p>
                   </div>
                 </div>
-                <span
-                  style={{
-                    backgroundColor: "#10B981",
-                    color: "#FFFFFF",
-                    fontSize: "0.75rem",
-                    fontWeight: 700,
-                    padding: "4px 10px",
-                    borderRadius: "980px",
-                  }}
-                >
-                  v1.0.0 Live
-                </span>
               </div>
 
               {/* App Screenshot Preview */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16/9",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  marginBottom: "20px",
-                  boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                }}
-              >
-                <Image
-                  src="/bravon-desktop-designer.png"
+              <div style={{ marginBottom: "22px" }}>
+                <DesktopAppMockup
+                  os="windows"
+                  src="/bravon-desktop-designer-clean.png"
                   alt="Bravon Print for Windows Designer"
-                  fill
-                  style={{ objectFit: "cover" }}
+                  title="Bravon Print Studio — Label Designer"
                 />
               </div>
 
@@ -549,26 +492,6 @@ export default function AppsPage() {
                     </p>
                   </div>
                 </div>
-
-                {/* Direct APK Link */}
-                <a
-                  href="/downloads/Bravon_Print_Android.apk"
-                  download
-                  style={{
-                    padding: "10px 16px",
-                    borderRadius: "14px",
-                    border: "1px solid rgba(0,0,0,0.15)",
-                    fontSize: "0.85rem",
-                    fontWeight: 600,
-                    color: "#1D1D1F",
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                >
-                  <Download size={14} /> Direct APK (2.1 MB)
-                </a>
               </div>
             </div>
           </div>

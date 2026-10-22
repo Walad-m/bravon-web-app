@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useSiteConfig } from "@/context/ConfigContext";
 import IPhoneMockup from "@/components/IPhoneMockup";
+import DesktopAppMockup from "@/components/DesktopAppMockup";
 
 export default function HomePage() {
   const { config } = useSiteConfig();
@@ -840,33 +841,19 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#10B981", backgroundColor: "rgba(16,185,129,0.12)", padding: "4px 10px", borderRadius: "980px" }}>
-                  v1.0.0 Stable
-                </span>
               </div>
 
               <p style={{ fontSize: "0.92rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "20px" }}>
                 Direct USB high-speed communication with zero driver lag. Includes batch spreadsheet importing, custom canvas layout, and 1-click test printing.
               </p>
 
-              {/* Real Desktop Screenshot */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16/9",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  marginBottom: "24px",
-                }}
-              >
-                <Image
-                  src="/bravon-desktop-dashboard.png"
+              {/* Desktop App Window Mockup */}
+              <div style={{ marginBottom: "24px" }}>
+                <DesktopAppMockup
+                  os="mac"
+                  src="/bravon-desktop-dashboard-mac.png"
                   alt="Bravon Desktop Studio for Windows and Mac"
-                  fill
-                  style={{ objectFit: "cover" }}
+                  title="Bravon Print Studio"
                 />
               </div>
             </div>

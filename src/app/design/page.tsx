@@ -3525,25 +3525,25 @@ export default function DesignStudioPage() {
                 </div>
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
-                <a
-                  href="/downloads/Bravon_Print_Android.apk"
-                  download
+                <Link
+                  href="/apps#mobile"
+                  target="_blank"
                   style={{
                     backgroundColor: "#FFFFFF",
                     color: "#0F172A",
                     border: "1px solid rgba(0,0,0,0.12)",
                     borderRadius: "6px",
-                    padding: "6px 10px",
+                    padding: "6px 12px",
                     fontSize: "0.78rem",
                     fontWeight: 600,
                     textDecoration: "none",
                     display: "flex",
                     alignItems: "center",
-                    gap: "4px",
+                    gap: "5px",
                   }}
                 >
-                  <Download size={12} /> Android APK
-                </a>
+                  <Smartphone size={12} /> Mobile App
+                </Link>
               </div>
             </div>
 
