@@ -23,7 +23,7 @@ export default function AppsPage() {
   const { config } = useSiteConfig();
 
   return (
-    <div style={{ backgroundColor: "#FFFFFF", color: "var(--text-primary)", minHeight: "100vh", paddingTop: "56px" }}>
+    <div style={{ backgroundColor: "#FFFFFF", color: "var(--text-primary)", minHeight: "100vh", paddingTop: "56px", overflowX: "hidden", width: "100%" }}>
       {/* Sub-header Breadcrumb */}
       <div style={{ borderBottom: "1px solid rgba(0,0,0,0.06)", backgroundColor: "var(--bg-apple)" }}>
         <div
@@ -137,6 +137,7 @@ export default function AppsPage() {
         >
           {/* macOS Card */}
           <div
+            className="desktop-app-card"
             style={{
               backgroundColor: "var(--bg-apple)",
               borderRadius: "28px",
@@ -146,6 +147,7 @@ export default function AppsPage() {
               flexDirection: "column",
               justifyContent: "space-between",
               boxShadow: "0 10px 30px rgba(0,0,0,0.03)",
+              minWidth: 0,
             }}
           >
             <div>
@@ -233,6 +235,7 @@ export default function AppsPage() {
 
           {/* Windows Card */}
           <div
+            className="desktop-app-card"
             style={{
               backgroundColor: "var(--bg-apple)",
               borderRadius: "28px",
@@ -242,6 +245,7 @@ export default function AppsPage() {
               flexDirection: "column",
               justifyContent: "space-between",
               boxShadow: "0 10px 30px rgba(0,0,0,0.03)",
+              minWidth: 0,
             }}
           >
             <div>
@@ -308,15 +312,15 @@ export default function AppsPage() {
                   className="btn-apple-primary"
                   style={{
                     flex: 1,
+                    minWidth: "160px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: "8px",
-                    padding: "14px 20px",
-                    fontSize: "0.95rem",
+                    padding: "14px 18px",
+                    fontSize: "0.92rem",
                     fontWeight: 700,
                     textDecoration: "none",
-                    whiteSpace: "nowrap",
                   }}
                 >
                   <Download size={16} />
@@ -338,7 +342,6 @@ export default function AppsPage() {
                     alignItems: "center",
                     justifyContent: "center",
                     gap: "6px",
-                    whiteSpace: "nowrap",
                   }}
                 >
                   MSI (.msi)
@@ -517,10 +520,13 @@ export default function AppsPage() {
             gridTemplateColumns: "1.1fr 1fr",
             gap: "40px",
             alignItems: "center",
+            boxSizing: "border-box",
+            width: "100%",
+            overflow: "hidden",
           }}
-          className="browser-studio-grid"
+          className="browser-studio-container browser-studio-grid"
         >
-          <div>
+          <div style={{ minWidth: 0 }}>
             <span className="eyebrow" style={{ marginBottom: "8px", display: "inline-block" }}>
               Zero Installation Required
             </span>
@@ -562,11 +568,12 @@ export default function AppsPage() {
             </Link>
           </div>
 
-          <div>
+          <div style={{ minWidth: 0, width: "100%", overflow: "hidden", display: "flex", justifyContent: "center" }}>
             <BrowserMockup
               src="/bravon-desktop-designer.png"
               alt="Bravon Browser Web Studio in Google Chrome / Safari"
               url="bravoncity.com/design"
+              style={{ maxWidth: "100%", width: "100%" }}
             />
           </div>
         </div>
@@ -597,21 +604,33 @@ export default function AppsPage() {
         @media (max-width: 900px) {
           .desktop-apps-grid {
             grid-template-columns: 1fr !important;
+            gap: 20px !important;
           }
           .mobile-layout-grid {
             grid-template-columns: 1fr !important;
+            gap: 28px !important;
           }
           .browser-studio-grid {
             grid-template-columns: 1fr !important;
+            gap: 28px !important;
           }
           .second-mobile-screen {
             display: none !important;
           }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+          .browser-studio-container {
+            padding: 28px 16px !important;
+            border-radius: 20px !important;
+          }
+          .desktop-app-card {
+            padding: 24px 16px !important;
+            border-radius: 20px !important;
+          }
           .mobile-apps-container {
             padding: 28px 16px !important;
+            border-radius: 20px !important;
           }
           .platform-pill {
             font-size: 0.8rem !important;
