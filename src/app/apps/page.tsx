@@ -15,6 +15,8 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useSiteConfig } from "@/context/ConfigContext";
+import IPhoneMockup from "@/components/IPhoneMockup";
+import BrowserMockup from "@/components/BrowserMockup";
 
 export default function AppsPage() {
   const { config } = useSiteConfig();
@@ -448,45 +450,21 @@ export default function AppsPage() {
             className="mobile-layout-grid"
           >
             {/* Left: Mobile Visuals */}
-            <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
-              <div
-                style={{
-                  position: "relative",
-                  width: "210px",
-                  height: "420px",
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  boxShadow: "0 15px 40px rgba(0,0,0,0.12)",
-                  border: "4px solid #1D1D1F",
-                }}
-              >
-                <Image
-                  src="/bravon-mobile-home.jpg"
-                  alt="Bravon Mobile App Home Screen"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-              <div
-                style={{
-                  position: "relative",
-                  width: "210px",
-                  height: "420px",
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  boxShadow: "0 15px 40px rgba(0,0,0,0.12)",
-                  border: "4px solid #1D1D1F",
-                  marginTop: "24px",
-                }}
+            <div style={{ display: "flex", gap: "20px", justifyContent: "center", alignItems: "flex-start" }}>
+              <IPhoneMockup
+                src="/bravon-mobile-home-clean.png"
+                alt="Bravon Mobile App Home Screen on iPhone"
+                width={225}
+                time="9:14"
+              />
+              <IPhoneMockup
+                src="/bravon-mobile-recent-clean.png"
+                alt="Bravon Mobile App Recent Print History on iPhone"
+                width={225}
+                time="9:14"
                 className="second-mobile-screen"
-              >
-                <Image
-                  src="/bravon-mobile-recent.jpg"
-                  alt="Bravon Mobile App Recent Print History"
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
+                style={{ marginTop: "32px" }}
+              />
             </div>
 
             {/* Right: Mobile Badges & Features */}
@@ -661,22 +639,11 @@ export default function AppsPage() {
             </Link>
           </div>
 
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "16/10",
-              borderRadius: "20px",
-              overflow: "hidden",
-              boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
-              border: "1px solid rgba(0,0,0,0.08)",
-            }}
-          >
-            <Image
+          <div>
+            <BrowserMockup
               src="/bravon-desktop-designer.png"
-              alt="Bravon Browser Web Studio"
-              fill
-              style={{ objectFit: "cover" }}
+              alt="Bravon Browser Web Studio in Google Chrome / Safari"
+              url="bravoncity.com/design"
             />
           </div>
         </div>

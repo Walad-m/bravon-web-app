@@ -15,6 +15,7 @@ import {
   Download
 } from "lucide-react";
 import { useSiteConfig } from "@/context/ConfigContext";
+import IPhoneMockup from "@/components/IPhoneMockup";
 
 export default function HomePage() {
   const { config } = useSiteConfig();
@@ -951,24 +952,12 @@ export default function HomePage() {
 
               {/* Mobile Mockup Preview */}
               <div style={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
-                <div
-                  style={{
-                    position: "relative",
-                    width: "150px",
-                    height: "250px",
-                    borderRadius: "18px",
-                    overflow: "hidden",
-                    boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-                    border: "3px solid #1D1D1F",
-                  }}
-                >
-                  <Image
-                    src="/bravon-mobile-home.jpg"
-                    alt="Bravon Mobile App for iOS & Android"
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
+                <IPhoneMockup
+                  src="/bravon-mobile-home-clean.png"
+                  alt="Bravon Mobile App on iPhone"
+                  width={185}
+                  time="9:14"
+                />
               </div>
             </div>
 
