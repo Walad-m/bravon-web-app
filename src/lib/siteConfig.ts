@@ -31,6 +31,20 @@ export interface SiteConfig {
   companyAddress: string;
   socialInstagram: string;
   socialTwitter: string;
+  socialYoutube: string;
+  socialTiktok: string;
+  socialFacebook: string;
+
+  // Video Section Settings
+  showVideoSection: boolean;
+  videoHeadline: string;
+  videoSubhead: string;
+  videoUrl: string;
+  videoPosterUrl: string;
+
+  // Warranty & Returns
+  warrantyDuration: string;
+  warrantyCoverageText: string;
 
   // Configurable Images
   heroImageWhite: string;
@@ -90,6 +104,20 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   companyAddress: "Bravon Inc. - Designed in California",
   socialInstagram: "https://instagram.com/bravoncity",
   socialTwitter: "https://x.com/bravoncity",
+  socialYoutube: "https://youtube.com/@bravoncity",
+  socialTiktok: "https://tiktok.com/@bravoncity",
+  socialFacebook: "https://facebook.com/bravoncity",
+
+  // Video Section defaults
+  showVideoSection: true,
+  videoHeadline: "See Bravon in Action",
+  videoSubhead: "Watch high-speed 160 mm/s direct thermal printing, wireless BLE pairing, and instant label feeding in real-time.",
+  videoUrl: "/bravon-printer-demo.mp4",
+  videoPosterUrl: "/bravon-shipping-action.jpg",
+
+  // Warranty & Returns
+  warrantyDuration: "2-Year Comprehensive",
+  warrantyCoverageText: "Covers thermal printhead, drive motor, motherboard & logic controllers with advance replacement.",
 
   // Configurable Images defaults
   heroImageWhite: "/bravon-ecosystem-white.jpg",

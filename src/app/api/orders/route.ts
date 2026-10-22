@@ -5,15 +5,31 @@ import { readOrders, updateOrderFulfillment } from "@/lib/orders";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("session_id");
+  const lookupId = searchParams.get("order_id") || searchParams.get("id");
+  const email = searchParams.get("email");
 
-  // 1. If looking up by session_id (public for the customer on the success page)
-  if (sessionId) {
+  // 1. If looking up by session_id, order_id, or id (public tracking for customer)
+  const targetId = sessionId || lookupId;
+  if (targetId) {
     const orders = await readOrders();
-    const order = orders.find((o) => o.id === sessionId);
+    const order = orders.find(
+      (o) =>
+        o.id.toLowerCase() === targetId.toLowerCase() ||
+        (o.paymentIntentId && o.paymentIntentId.toLowerCase() === targetId.toLowerCase())
+    );
+
     if (!order) {
-      return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
+      return NextResponse.json({ success: false, error: "Order not found. Please check your order ID." }, { status: 404 });
     }
-    // Return sanitized customer receipt
+
+    if (email && order.customerEmail.toLowerCase() !== email.toLowerCase().trim()) {
+      return NextResponse.json(
+        { success: false, error: "Email address does not match order records." },
+        { status: 403 }
+      );
+    }
+
+    // Return sanitized customer receipt & tracking info
     return NextResponse.json({
       success: true,
       order: {
@@ -23,7 +39,9 @@ export async function GET(req: NextRequest) {
         items: order.items,
         amountTotal: order.amountTotal,
         currency: order.currency,
-        fulfillmentStatus: order.fulfillmentStatus,
+        fulfillmentStatus: order.fulfillmentStatus || "unfulfilled",
+        trackingNumber: order.trackingNumber || null,
+        trackingCarrier: order.trackingCarrier || null,
         createdAt: order.createdAt,
         shipping: order.shipping,
       },

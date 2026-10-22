@@ -45,27 +45,105 @@ export default function Footer() {
             <p style={{ fontSize: "0.88rem", lineHeight: 1.6, marginBottom: "20px", maxWidth: "320px" }}>
               Commercial thermal label printing ecosystem. Engineered with companion native apps for macOS, Windows, iOS & Android.
             </p>
-            <div style={{ display: "flex", gap: "10px", marginBottom: "24px" }}>
-              <a
-                href="https://bravoncity.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  backgroundColor: "#FFFFFF",
-                  border: "1px solid rgba(0,0,0,0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--text-secondary)",
-                  textDecoration: "none",
-                }}
-                aria-label="Website"
-              >
-                <Globe size={16} />
-              </a>
+            <div style={{ display: "flex", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
+              {config.socialInstagram && (
+                <a
+                  href={config.socialInstagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                  }}
+                  aria-label="Instagram"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </a>
+              )}
+              {config.socialYoutube && (
+                <a
+                  href={config.socialYoutube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                  }}
+                  aria-label="YouTube"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                </a>
+              )}
+              {config.socialTwitter && (
+                <a
+                  href={config.socialTwitter}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                  }}
+                  aria-label="X (Twitter)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </a>
+              )}
+              {config.socialTiktok && (
+                <a
+                  href={config.socialTiktok}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "50%",
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid rgba(0,0,0,0.1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                  }}
+                  aria-label="TikTok"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.29 0 .58.04.86.12V9.42a6.34 6.34 0 0 0-.86-.06 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.76a8.28 8.28 0 0 0 4.83 1.55V6.86a4.85 4.85 0 0 1-1.06-.17z" />
+                  </svg>
+                </a>
+              )}
               <Link
                 href="/contact"
                 style={{
@@ -134,8 +212,10 @@ export default function Footer() {
                 Buyer Protection
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
-                <Link href="/shipping" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Shipping &amp; Delivery</Link>
+                <Link href="/track" style={{ color: "var(--bravon-purple)", fontWeight: 600, textDecoration: "none" }}>Track Your Order →</Link>
                 <Link href="/returns" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>30-Day Money-Back</Link>
+                <Link href="/returns" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>2-Year Warranty Portal</Link>
+                <Link href="/shipping" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Shipping &amp; Delivery</Link>
                 <Link href="/privacy" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Privacy Policy</Link>
                 <Link href="/terms" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Terms of Service</Link>
               </div>

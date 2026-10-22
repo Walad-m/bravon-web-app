@@ -95,7 +95,7 @@ export default function Navbar() {
               { label: "Tech Specs", href: "/#specs" },
               { label: "Apps", href: "/apps" },
               { label: "Design Studio", href: "/design" },
-              { label: "About", href: "/about" },
+              { label: "Track Order", href: "/track" },
               { label: "FAQ", href: "/faq" },
             ].map((link) => (
               <Link
@@ -196,6 +196,8 @@ export default function Navbar() {
               { label: "Technical Specifications", href: "/#specs" },
               { label: "Apps & Downloads (Mac, Win, iOS, Android)", href: "/apps" },
               { label: "Design Studio (Web)", href: "/design" },
+              { label: "Track Your Order", href: "/track" },
+              { label: "Returns & 2-Year Warranty", href: "/returns" },
               { label: "Order Bravon ($100)", href: "/product" },
               { label: "About Bravon", href: "/about" },
               { label: "FAQ & Support", href: "/faq" },
