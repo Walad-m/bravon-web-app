@@ -208,7 +208,7 @@ export default function AppsPage() {
             {/* Download Buttons */}
             <div>
               <a
-                href="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                href={config.macDownloadUrl || "/downloads/Bravon_Print_1.0.0_universal.dmg"}
                 download
                 className="btn-apple-primary"
                 style={{
@@ -303,35 +303,36 @@ export default function AppsPage() {
               </div>
             </div>
 
-            {/* Download Buttons (Exe & MSI) */}
+            {/* Download Buttons (MSI Default & Exe Secondary) */}
             <div>
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                 <a
-                  href="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                  href={config.windowsMsiUrl || "/downloads/Bravon_Print_1.0.0_x64_en-US.msi"}
                   download
                   className="btn-apple-primary"
                   style={{
                     flex: 1,
-                    minWidth: "160px",
+                    minWidth: "170px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     gap: "8px",
-                    padding: "14px 18px",
-                    fontSize: "0.92rem",
+                    padding: "14px 20px",
+                    fontSize: "0.95rem",
                     fontWeight: 700,
                     textDecoration: "none",
                   }}
                 >
                   <Download size={16} />
-                  Download Setup (.exe)
+                  Download for Windows (.msi)
+                  <span style={{ fontSize: "0.78rem", opacity: 0.8, fontWeight: 500 }}>— 10.4 MB</span>
                 </a>
                 <a
-                  href="/downloads/Bravon_Print_1.0.0_x64_en-US.msi"
+                  href={config.windowsExeUrl || "/downloads/Bravon_Print_1.0.0_x64_setup.exe"}
                   download
                   style={{
                     padding: "14px 18px",
-                    fontSize: "0.9rem",
+                    fontSize: "0.88rem",
                     fontWeight: 600,
                     color: "#1D1D1F",
                     backgroundColor: "#FFFFFF",
@@ -344,11 +345,11 @@ export default function AppsPage() {
                     gap: "6px",
                   }}
                 >
-                  MSI (.msi)
+                  EXE Setup (.exe)
                 </a>
               </div>
               <p style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", textAlign: "center", marginTop: "8px" }}>
-                Installer (8.8 MB) · Enterprise MSI (10.4 MB) · 64-bit Architecture
+                Windows Installer (.msi Recommended) · Standalone Setup (.exe) · 64-bit Architecture
               </p>
             </div>
           </div>
@@ -447,7 +448,10 @@ export default function AppsPage() {
               {/* App Store & Google Play Badges */}
               <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", alignItems: "center" }}>
                 {/* iOS Badge */}
-                <div
+                <a
+                  href={config.iosAppStoreUrl || "https://apps.apple.com"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     backgroundColor: "#1D1D1F",
                     color: "#FFFFFF",
@@ -456,9 +460,12 @@ export default function AppsPage() {
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                    cursor: "pointer",
+                    textDecoration: "none",
                     boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+                    transition: "transform 0.15s ease",
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                 >
                   <Apple size={24} color="#FFFFFF" />
                   <div>
@@ -469,10 +476,13 @@ export default function AppsPage() {
                       Apple App Store
                     </p>
                   </div>
-                </div>
+                </a>
 
                 {/* Android Google Play Badge */}
-                <div
+                <a
+                  href={config.androidPlayStoreUrl || "https://play.google.com"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     backgroundColor: "#1D1D1F",
                     color: "#FFFFFF",
@@ -481,9 +491,12 @@ export default function AppsPage() {
                     display: "flex",
                     alignItems: "center",
                     gap: "10px",
-                    cursor: "pointer",
+                    textDecoration: "none",
                     boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+                    transition: "transform 0.15s ease",
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                 >
                   <Smartphone size={22} color="#10B981" />
                   <div>
@@ -494,7 +507,7 @@ export default function AppsPage() {
                       Google Play
                     </p>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>

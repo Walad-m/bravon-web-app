@@ -78,8 +78,10 @@ import {
 import { generateCode128Bars, generateQRMatrix, generateId } from "@/lib/designUtils";
 import { generateTsplString, generateTsplBase64 } from "@/lib/tspl";
 import { DEFAULT_DESIGN_TEMPLATES } from "@/data/designTemplates";
+import { useSiteConfig } from "@/context/ConfigContext";
 
 export default function DesignStudioPage() {
+  const { config } = useSiteConfig();
   // Active App Section / View: 'dashboard' | 'editor' | 'templates' | 'printers' | 'history' | 'settings'
   const [activeView, setActiveView] = useState<"dashboard" | "editor" | "templates" | "printers" | "history" | "settings">("dashboard");
 
@@ -3414,7 +3416,7 @@ export default function DesignStudioPage() {
                   </p>
                 </div>
                 <a
-                  href="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                  href={config.macDownloadUrl || "/downloads/Bravon_Print_1.0.0_universal.dmg"}
                   download
                   style={{
                     display: "flex",
@@ -3457,7 +3459,7 @@ export default function DesignStudioPage() {
                 </div>
                 <div style={{ display: "flex", gap: "6px" }}>
                   <a
-                    href="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                    href={config.windowsMsiUrl || "/downloads/Bravon_Print_1.0.0_x64_en-US.msi"}
                     download
                     style={{
                       flex: 1,
@@ -3474,10 +3476,10 @@ export default function DesignStudioPage() {
                       textDecoration: "none",
                     }}
                   >
-                    <Download size={13} /> .exe (8.8 MB)
+                    <Download size={13} /> .msi (10.4 MB)
                   </a>
                   <a
-                    href="/downloads/Bravon_Print_1.0.0_x64_en-US.msi"
+                    href={config.windowsExeUrl || "/downloads/Bravon_Print_1.0.0_x64_setup.exe"}
                     download
                     style={{
                       display: "flex",
@@ -3493,7 +3495,7 @@ export default function DesignStudioPage() {
                       textDecoration: "none",
                     }}
                   >
-                    .msi
+                    .exe
                   </a>
                 </div>
               </div>

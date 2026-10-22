@@ -63,7 +63,7 @@ export default function ProductPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Unable to reach Stripe checkout server. Please check your network connection.");
+        alert(data.error || "Unable to reach Stripe checkout server. Please check your network connection.");
       }
     } catch (err) {
       console.error(err);

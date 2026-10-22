@@ -46,6 +46,13 @@ export interface SiteConfig {
   warrantyDuration: string;
   warrantyCoverageText: string;
 
+  // App Downloads & Software Links
+  windowsMsiUrl: string;
+  windowsExeUrl: string;
+  macDownloadUrl: string;
+  iosAppStoreUrl: string;
+  androidPlayStoreUrl: string;
+
   // Configurable Images
   heroImageWhite: string;
   heroImageDark: string;
@@ -118,6 +125,13 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   // Warranty & Returns
   warrantyDuration: "2-Year Comprehensive",
   warrantyCoverageText: "Covers thermal printhead, drive motor, motherboard & logic controllers with advance replacement.",
+
+  // App Downloads & Software defaults
+  windowsMsiUrl: "/downloads/Bravon_Print_1.0.0_x64_en-US.msi",
+  windowsExeUrl: "/downloads/Bravon_Print_1.0.0_x64_setup.exe",
+  macDownloadUrl: "/downloads/Bravon_Print_1.0.0_universal.dmg",
+  iosAppStoreUrl: "https://apps.apple.com/app/bravon-print",
+  androidPlayStoreUrl: "https://play.google.com/store/apps/details?id=com.bravon.print",
 
   // Configurable Images defaults
   heroImageWhite: "/bravon-ecosystem-white.jpg",

@@ -186,8 +186,8 @@ export default function Footer() {
                 Apps &amp; Software
               </h4>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontSize: "0.88rem" }}>
-                <a href="/downloads/Bravon_Print_1.0.0_universal.dmg" download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>macOS App (.dmg)</a>
-                <a href="/downloads/Bravon_Print_1.0.0_x64_setup.exe" download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Windows App (.exe)</a>
+                <a href={config.macDownloadUrl || "/downloads/Bravon_Print_1.0.0_universal.dmg"} download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>macOS App (.dmg)</a>
+                <a href={config.windowsMsiUrl || "/downloads/Bravon_Print_1.0.0_x64_en-US.msi"} download style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Windows App (.msi)</a>
                 <Link href="/apps#mobile" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>iOS &amp; Android Apps</Link>
                 <Link href="/design" style={{ color: "var(--text-secondary)", textDecoration: "none" }}>Browser Web Studio</Link>
               </div>

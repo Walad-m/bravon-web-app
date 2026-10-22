@@ -6,31 +6,55 @@ export interface Claim {
   orderId: string;
   customerEmail: string;
   customerName?: string;
-  claimType: "return" | "warranty";
+  customerPhone?: string;
+  claimType: "return" | "warranty" | "return_30d" | "warranty_2yr" | "doa";
   reason: string;
   description: string;
+  serialNumber?: string;
+  purchaseDate?: string;
+  preferredResolution?: string;
   photoUrl?: string;
-  status: "pending" | "approved" | "replacement_shipped" | "refunded" | "rejected";
+  status: "pending" | "approved" | "inspecting" | "replaced" | "refunded" | "rejected";
   adminNotes?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-const CLAIMS_FILE = path.join(process.cwd(), "src", "data", "claims.json");
+const LOCAL_CLAIMS = path.join(process.cwd(), "src", "data", "claims.json");
+const TMP_CLAIMS = path.join("/tmp", "bravon-claims.json");
+
+let memoryClaims: Claim[] | null = null;
 
 export async function readClaims(): Promise<Claim[]> {
+  if (memoryClaims) return memoryClaims;
+
   try {
-    const raw = await fs.readFile(CLAIMS_FILE, "utf-8");
-    return JSON.parse(raw);
+    const raw = await fs.readFile(TMP_CLAIMS, "utf-8");
+    memoryClaims = JSON.parse(raw);
+    return memoryClaims!;
+  } catch {}
+
+  try {
+    const raw = await fs.readFile(LOCAL_CLAIMS, "utf-8");
+    memoryClaims = JSON.parse(raw);
+    return memoryClaims!;
   } catch {
     return [];
   }
 }
 
 export async function writeClaims(claims: Claim[]): Promise<void> {
-  const dir = path.dirname(CLAIMS_FILE);
-  await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(CLAIMS_FILE, JSON.stringify(claims, null, 2), "utf-8");
+  memoryClaims = claims;
+
+  try {
+    const dir = path.dirname(LOCAL_CLAIMS);
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(LOCAL_CLAIMS, JSON.stringify(claims, null, 2), "utf-8");
+  } catch {}
+
+  try {
+    await fs.writeFile(TMP_CLAIMS, JSON.stringify(claims, null, 2), "utf-8");
+  } catch {}
 }
 
 export async function createClaim(data: Omit<Claim, "id" | "status" | "createdAt" | "updatedAt">): Promise<Claim> {

@@ -39,35 +39,52 @@ export interface OrderRecord {
   createdAt: string;
 }
 
-const ORDERS_FILE = path.join(process.cwd(), "src", "data", "orders.json");
+const LOCAL_ORDERS = path.join(process.cwd(), "src", "data", "orders.json");
+const TMP_ORDERS = path.join("/tmp", "bravon-orders.json");
+
+let memoryOrders: OrderRecord[] | null = null;
 
 export async function readOrders(): Promise<OrderRecord[]> {
+  if (memoryOrders) return memoryOrders;
+
   try {
-    if (!fs.existsSync(ORDERS_FILE)) {
-      return [];
+    if (fs.existsSync(TMP_ORDERS)) {
+      const data = await fs.promises.readFile(TMP_ORDERS, "utf-8");
+      memoryOrders = JSON.parse(data);
+      return memoryOrders!;
     }
-    const data = await fs.promises.readFile(ORDERS_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (err) {
-    console.error("Error reading orders:", err);
-    return [];
-  }
+  } catch {}
+
+  try {
+    if (fs.existsSync(LOCAL_ORDERS)) {
+      const data = await fs.promises.readFile(LOCAL_ORDERS, "utf-8");
+      memoryOrders = JSON.parse(data);
+      return memoryOrders!;
+    }
+  } catch {}
+
+  return [];
 }
 
 export async function saveOrder(order: OrderRecord): Promise<void> {
-  try {
-    const orders = await readOrders();
-    const existingIndex = orders.findIndex((o) => o.id === order.id);
-    if (existingIndex >= 0) {
-      orders[existingIndex] = { ...orders[existingIndex], ...order };
-    } else {
-      orders.unshift(order);
-    }
-    await fs.promises.mkdir(path.dirname(ORDERS_FILE), { recursive: true });
-    await fs.promises.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf-8");
-  } catch (err) {
-    console.error("Error saving order:", err);
+  const orders = await readOrders();
+  const existingIndex = orders.findIndex((o) => o.id === order.id);
+  if (existingIndex >= 0) {
+    orders[existingIndex] = { ...orders[existingIndex], ...order };
+  } else {
+    orders.unshift(order);
   }
+
+  memoryOrders = orders;
+
+  try {
+    await fs.promises.mkdir(path.dirname(LOCAL_ORDERS), { recursive: true });
+    await fs.promises.writeFile(LOCAL_ORDERS, JSON.stringify(orders, null, 2), "utf-8");
+  } catch {}
+
+  try {
+    await fs.promises.writeFile(TMP_ORDERS, JSON.stringify(orders, null, 2), "utf-8");
+  } catch {}
 }
 
 export async function updateOrderFulfillment(
@@ -84,6 +101,15 @@ export async function updateOrderFulfillment(
   if (trackingNumber) order.trackingNumber = trackingNumber;
   if (trackingCarrier) order.trackingCarrier = trackingCarrier;
 
-  await fs.promises.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), "utf-8");
+  memoryOrders = orders;
+
+  try {
+    await fs.promises.writeFile(LOCAL_ORDERS, JSON.stringify(orders, null, 2), "utf-8");
+  } catch {}
+
+  try {
+    await fs.promises.writeFile(TMP_ORDERS, JSON.stringify(orders, null, 2), "utf-8");
+  } catch {}
+
   return order;
 }

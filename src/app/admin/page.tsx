@@ -36,11 +36,16 @@ import {
   ShoppingBag,
   Truck,
   User,
+  Video,
+  Play,
+  FileText,
+  Smartphone,
+  Monitor,
 } from "lucide-react";
 import BravonLogo from "@/components/BravonLogo";
 import { DEFAULT_SITE_CONFIG, SiteConfig } from "@/lib/siteConfig";
 
-type AdminTab = "orders" | "product" | "media" | "hero" | "store" | "commerce" | "security";
+type AdminTab = "orders" | "claims" | "product" | "media" | "hero" | "store" | "commerce" | "security";
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
@@ -147,6 +152,55 @@ export default function AdminPage() {
     }
   };
 
+  // Returns & Warranty Claims state
+  const [claims, setClaims] = useState<any[]>([]);
+  const [loadingClaims, setLoadingClaims] = useState(false);
+  const [updatingClaimId, setUpdatingClaimId] = useState<string | null>(null);
+  const [claimFilter, setClaimFilter] = useState<string>("all");
+  const [adminNotesInputs, setAdminNotesInputs] = useState<{ [key: string]: string }>({});
+
+  const loadClaims = async () => {
+    setLoadingClaims(true);
+    try {
+      const res = await fetch("/api/claims", { cache: "no-store" });
+      const data = await res.json();
+      if (data.success) {
+        setClaims(data.claims || []);
+      }
+    } catch (err) {
+      console.error("Error loading claims:", err);
+    } finally {
+      setLoadingClaims(false);
+    }
+  };
+
+  const handleUpdateClaimStatus = async (
+    claimId: string,
+    status: "pending" | "approved" | "inspecting" | "replaced" | "refunded" | "rejected",
+    notes?: string
+  ) => {
+    setUpdatingClaimId(claimId);
+    try {
+      const res = await fetch("/api/claims", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: claimId,
+          status,
+          adminNotes: notes !== undefined ? notes : (adminNotesInputs[claimId] || ""),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadClaims();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUpdatingClaimId(null);
+    }
+  };
+
   // Detect mobile viewport
   useEffect(() => {
     const handleResize = () => {
@@ -182,6 +236,7 @@ export default function AdminPage() {
         loadConfig();
         loadSecurityInfo();
         loadOrders();
+        loadClaims();
       }
     } catch {
       setAuthenticated(false);
@@ -234,6 +289,8 @@ export default function AdminPage() {
         setTwoFactorCode("");
         loadConfig();
         loadSecurityInfo();
+        loadOrders();
+        loadClaims();
       } else if (data.requires2FA) {
         setRequires2FA(true);
         setLoginError(data.message || "Enter 6-digit authenticator code");
@@ -445,6 +502,12 @@ export default function AdminPage() {
   // Nav Items definition
   const NAV_ITEMS: Array<{ id: AdminTab; label: string; icon: React.ElementType; badge?: string }> = [
     { id: "orders", label: "Orders & Shipping", icon: ShoppingBag, badge: orderStats.unfulfilled > 0 ? `${orderStats.unfulfilled} New` : undefined },
+    {
+      id: "claims",
+      label: "Returns & Warranty",
+      icon: ShieldAlert,
+      badge: claims.filter((c) => c.status === "pending").length > 0 ? `${claims.filter((c) => c.status === "pending").length} New` : undefined,
+    },
     { id: "product", label: "Product & Pricing", icon: Package },
     { id: "media", label: "Media & Images", icon: ImageIcon },
     { id: "hero", label: "Hero & Banners", icon: Megaphone },
@@ -684,7 +747,7 @@ export default function AdminPage() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+        accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif,video/mp4,video/webm"
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
@@ -1442,6 +1505,511 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* TAB: RETURNS & WARRANTY CLAIMS (RMA) */}
+          {activeTab === "claims" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {/* Claims KPI Stats */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr 1fr", gap: "12px" }}>
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "18px 20px" }}>
+                  <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.04em" }}>Total Claims</div>
+                  <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0F172A", marginTop: "4px" }}>{claims.length}</div>
+                  <div style={{ fontSize: "0.74rem", color: "#64748B", marginTop: "2px" }}>Lifetime RMA tickets</div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "18px 20px" }}>
+                  <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "#D97706", textTransform: "uppercase", letterSpacing: "0.04em" }}>Pending Review</div>
+                  <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#D97706", marginTop: "4px" }}>
+                    {claims.filter((c) => c.status === "pending").length}
+                  </div>
+                  <div style={{ fontSize: "0.74rem", color: "#64748B", marginTop: "2px" }}>Awaiting triage</div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "18px 20px" }}>
+                  <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.04em" }}>In Process</div>
+                  <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#2563EB", marginTop: "4px" }}>
+                    {claims.filter((c) => c.status === "approved" || c.status === "inspecting").length}
+                  </div>
+                  <div style={{ fontSize: "0.74rem", color: "#64748B", marginTop: "2px" }}>Approved / Inspecting</div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "18px 20px" }}>
+                  <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "#16A34A", textTransform: "uppercase", letterSpacing: "0.04em" }}>Resolved</div>
+                  <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#16A34A", marginTop: "4px" }}>
+                    {claims.filter((c) => c.status === "replaced" || c.status === "refunded").length}
+                  </div>
+                  <div style={{ fontSize: "0.74rem", color: "#64748B", marginTop: "2px" }}>Replacements & refunds</div>
+                </div>
+              </div>
+
+              {/* Claims Controls & Filter Tabs */}
+              <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: isMobile ? "16px 14px" : "18px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  {[
+                    { id: "all", label: "All Tickets" },
+                    { id: "pending", label: "Pending" },
+                    { id: "approved", label: "Approved" },
+                    { id: "inspecting", label: "Inspecting" },
+                    { id: "replaced", label: "Replaced" },
+                    { id: "refunded", label: "Refunded" },
+                    { id: "rejected", label: "Rejected" },
+                  ].map((filter) => {
+                    const count = filter.id === "all" ? claims.length : claims.filter((c) => c.status === filter.id).length;
+                    const isActive = claimFilter === filter.id;
+                    return (
+                      <button
+                        key={filter.id}
+                        type="button"
+                        onClick={() => setClaimFilter(filter.id)}
+                        style={{
+                          padding: "6px 12px",
+                          borderRadius: "6px",
+                          border: isActive ? "1px solid #7C3AED" : "1px solid rgba(0,0,0,0.08)",
+                          backgroundColor: isActive ? "rgba(124, 58, 237, 0.08)" : "#FFFFFF",
+                          color: isActive ? "#7C3AED" : "#64748B",
+                          fontSize: "0.78rem",
+                          fontWeight: isActive ? 700 : 500,
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <span>{filter.label}</span>
+                        <span
+                          style={{
+                            fontSize: "0.7rem",
+                            padding: "1px 5px",
+                            borderRadius: "10px",
+                            backgroundColor: isActive ? "#7C3AED" : "#F1F5F9",
+                            color: isActive ? "#FFFFFF" : "#64748B",
+                            fontWeight: 700,
+                          }}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <a
+                    href="/returns"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0,0,0,0.1)",
+                      backgroundColor: "#FFFFFF",
+                      color: "#475569",
+                      fontSize: "0.78rem",
+                      fontWeight: 500,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span>Customer Portal</span>
+                    <ExternalLink size={12} />
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={loadClaims}
+                    disabled={loadingClaims}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      padding: "6px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0,0,0,0.1)",
+                      backgroundColor: "#FFFFFF",
+                      color: "#475569",
+                      fontSize: "0.78rem",
+                      fontWeight: 500,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <RefreshCw size={12} className={loadingClaims ? "animate-spin" : ""} />
+                    <span>{loadingClaims ? "Refreshing..." : "Refresh"}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Claims List */}
+              {claims.length === 0 ? (
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "48px 24px", textAlign: "center" }}>
+                  <ShieldAlert size={36} color="#94A3B8" style={{ margin: "0 auto 12px" }} />
+                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
+                    No warranty or return claims yet
+                  </h3>
+                  <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0 }}>
+                    When customers submit returns or warranty claims at <span style={{ fontFamily: "monospace" }}>/returns</span>, tickets will appear here instantly.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {claims
+                    .filter((c) => claimFilter === "all" || c.status === claimFilter)
+                    .map((claim) => {
+                      const isUpdating = updatingClaimId === claim.id;
+                      const statusColors: { [key: string]: { bg: string; text: string; border: string } } = {
+                        pending: { bg: "#FEF3C7", text: "#92400E", border: "#FDE68A" },
+                        approved: { bg: "#DBEAFE", text: "#1E40AF", border: "#BFDBFE" },
+                        inspecting: { bg: "#EDE9FE", text: "#5B21B6", border: "#DDD6FE" },
+                        replaced: { bg: "#DCFCE7", text: "#166534", border: "#BBF7D0" },
+                        refunded: { bg: "#ECFDF5", text: "#065F46", border: "#A7F3D0" },
+                        rejected: { bg: "#FEE2E2", text: "#991B1B", border: "#FECACA" },
+                      };
+                      const color = statusColors[claim.status] || { bg: "#F1F5F9", text: "#475569", border: "#E2E8F0" };
+
+                      return (
+                        <div
+                          key={claim.id}
+                          style={{
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "12px",
+                            border: "1px solid rgba(0,0,0,0.08)",
+                            padding: isMobile ? "16px 14px" : "20px 24px",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "14px",
+                          }}
+                        >
+                          {/* Claim Header */}
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              <div
+                                style={{
+                                  padding: "6px 10px",
+                                  borderRadius: "6px",
+                                  backgroundColor: "#F8FAFC",
+                                  border: "1px solid rgba(0,0,0,0.06)",
+                                  fontFamily: "monospace",
+                                  fontSize: "0.85rem",
+                                  fontWeight: 700,
+                                  color: "#0F172A",
+                                }}
+                              >
+                                {claim.id}
+                              </div>
+
+                              <span
+                                style={{
+                                  fontSize: "0.72rem",
+                                  fontWeight: 700,
+                                  textTransform: "uppercase",
+                                  padding: "3px 8px",
+                                  borderRadius: "999px",
+                                  backgroundColor: color.bg,
+                                  color: color.text,
+                                  border: `1px solid ${color.border}`,
+                                }}
+                              >
+                                {claim.status}
+                              </span>
+
+                              <span
+                                style={{
+                                  fontSize: "0.74rem",
+                                  fontWeight: 600,
+                                  padding: "3px 8px",
+                                  borderRadius: "6px",
+                                  backgroundColor: claim.claimType === "warranty" ? "rgba(124, 58, 237, 0.08)" : "rgba(37, 99, 235, 0.08)",
+                                  color: claim.claimType === "warranty" ? "#7C3AED" : "#2563EB",
+                                }}
+                              >
+                                {claim.claimType === "warranty" ? "Warranty Claim" : "Return / Refund"}
+                              </span>
+                            </div>
+
+                            <span style={{ fontSize: "0.75rem", color: "#64748B" }}>
+                              Submitted {new Date(claim.createdAt).toLocaleDateString()} at {new Date(claim.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+
+                          {/* Customer & Order details grid */}
+                          <div
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
+                              gap: "12px",
+                              backgroundColor: "#F8FAFC",
+                              padding: "12px 14px",
+                              borderRadius: "8px",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            <div>
+                              <div style={{ color: "#64748B", fontSize: "0.72rem", textTransform: "uppercase", fontWeight: 600 }}>Customer</div>
+                              <div style={{ fontWeight: 600, color: "#0F172A", marginTop: "2px" }}>{claim.customerName || "Customer"}</div>
+                              <div style={{ color: "#475569" }}>{claim.customerEmail}</div>
+                              {claim.customerPhone && <div style={{ color: "#64748B", fontSize: "0.74rem" }}>{claim.customerPhone}</div>}
+                            </div>
+
+                            <div>
+                              <div style={{ color: "#64748B", fontSize: "0.72rem", textTransform: "uppercase", fontWeight: 600 }}>Order Reference</div>
+                              <div style={{ fontWeight: 600, color: "#0F172A", marginTop: "2px", fontFamily: "monospace" }}>{claim.orderId}</div>
+                              {claim.serialNumber && (
+                                <div style={{ color: "#64748B", fontSize: "0.74rem", marginTop: "2px" }}>
+                                  Serial: <span style={{ fontFamily: "monospace", color: "#0F172A" }}>{claim.serialNumber}</span>
+                                </div>
+                              )}
+                              {claim.purchaseDate && <div style={{ color: "#64748B", fontSize: "0.74rem" }}>Purchased: {claim.purchaseDate}</div>}
+                            </div>
+
+                            <div>
+                              <div style={{ color: "#64748B", fontSize: "0.72rem", textTransform: "uppercase", fontWeight: 600 }}>Reason for Request</div>
+                              <div style={{ fontWeight: 600, color: "#0F172A", marginTop: "2px" }}>{claim.reason}</div>
+                              {claim.preferredResolution && (
+                                <div style={{ color: "#64748B", fontSize: "0.74rem", marginTop: "2px" }}>
+                                  Prefers: {claim.preferredResolution}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Issue Description */}
+                          <div>
+                            <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "#64748B", marginBottom: "4px" }}>
+                              Customer Description:
+                            </div>
+                            <div style={{ fontSize: "0.82rem", color: "#334155", backgroundColor: "#FFFFFF", border: "1px solid rgba(0,0,0,0.08)", padding: "10px 12px", borderRadius: "6px", lineHeight: 1.5 }}>
+                              {claim.description}
+                            </div>
+                          </div>
+
+                          {/* Admin Notes & Status Transitions */}
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: isMobile ? "column" : "row",
+                              alignItems: isMobile ? "stretch" : "center",
+                              justifyContent: "space-between",
+                              gap: "12px",
+                              borderTop: "1px solid rgba(0,0,0,0.06)",
+                              paddingTop: "12px",
+                            }}
+                          >
+                            {/* Internal Note Input */}
+                            <div style={{ display: "flex", gap: "6px", flex: 1, maxWidth: isMobile ? "100%" : "380px" }}>
+                              <input
+                                type="text"
+                                placeholder={claim.adminNotes ? `Note: ${claim.adminNotes}` : "Add internal note..."}
+                                value={adminNotesInputs[claim.id] !== undefined ? adminNotesInputs[claim.id] : ""}
+                                onChange={(e) => setAdminNotesInputs((prev) => ({ ...prev, [claim.id]: e.target.value }))}
+                                style={{
+                                  flex: 1,
+                                  padding: "6px 10px",
+                                  fontSize: "0.78rem",
+                                  borderRadius: "6px",
+                                  border: "1px solid rgba(0,0,0,0.12)",
+                                  outline: "none",
+                                }}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateClaimStatus(claim.id, claim.status, adminNotesInputs[claim.id])}
+                                disabled={isUpdating}
+                                style={{
+                                  padding: "6px 10px",
+                                  fontSize: "0.76rem",
+                                  fontWeight: 600,
+                                  borderRadius: "6px",
+                                  border: "1px solid rgba(0,0,0,0.1)",
+                                  backgroundColor: "#FFFFFF",
+                                  color: "#334155",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                Save Note
+                              </button>
+                            </div>
+
+                            {/* Status Change Buttons */}
+                            <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", justifyContent: isMobile ? "stretch" : "flex-end" }}>
+                              {claim.status === "pending" && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "approved")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#2563EB",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Approve RMA
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "rejected")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#FEE2E2",
+                                      color: "#991B1B",
+                                      border: "1px solid #FECACA",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              )}
+
+                              {claim.status === "approved" && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "inspecting")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#7C3AED",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Mark Inspecting
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "replaced")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#16A34A",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Issue Replacement
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "refunded")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#059669",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Issue Refund
+                                  </button>
+                                </>
+                              )}
+
+                              {claim.status === "inspecting" && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "replaced")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#16A34A",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Mark Replaced
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "refunded")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#059669",
+                                      color: "#FFFFFF",
+                                      border: "none",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Mark Refunded
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateClaimStatus(claim.id, "rejected")}
+                                    disabled={isUpdating}
+                                    style={{
+                                      padding: "7px 12px",
+                                      borderRadius: "6px",
+                                      backgroundColor: "#FEE2E2",
+                                      color: "#991B1B",
+                                      border: "1px solid #FECACA",
+                                      fontSize: "0.78rem",
+                                      fontWeight: 600,
+                                      cursor: isUpdating ? "wait" : "pointer",
+                                    }}
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              )}
+
+                              {(claim.status === "replaced" || claim.status === "refunded" || claim.status === "rejected") && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateClaimStatus(claim.id, "pending")}
+                                  disabled={isUpdating}
+                                  style={{
+                                    padding: "7px 12px",
+                                    borderRadius: "6px",
+                                    backgroundColor: "#FFFFFF",
+                                    border: "1px solid rgba(0,0,0,0.12)",
+                                    color: "#475569",
+                                    fontSize: "0.76rem",
+                                    cursor: isUpdating ? "wait" : "pointer",
+                                  }}
+                                >
+                                  Reopen as Pending
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* TAB 1: PRODUCT & PRICING */}
           {activeTab === "product" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -1829,6 +2397,217 @@ export default function AdminPage() {
                   })}
                 </div>
               </div>
+
+              {/* VIDEO SHOWCASE SECTION (Client requested dynamic video management) */}
+              <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: isMobile ? "18px 14px" : "22px 24px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Video size={18} color="#7C3AED" />
+                      <h2 style={{ fontSize: "1.05rem", fontWeight: 700, margin: 0, color: "#0F172A" }}>
+                        Homepage Video Showcase
+                      </h2>
+                    </div>
+                    <p style={{ fontSize: "0.8rem", color: "#64748B", margin: "4px 0 0" }}>
+                      Control the printer demonstration video displayed on your storefront. Upload an MP4 or paste any video link.
+                    </p>
+                  </div>
+
+                  <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={form.showVideoSection ?? true}
+                      onChange={(e) => handleChange("showVideoSection", e.target.checked)}
+                      style={{ width: "16px", height: "16px", accentColor: "#7C3AED" }}
+                    />
+                    <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#334155" }}>
+                      {form.showVideoSection ? "Section Enabled" : "Section Hidden"}
+                    </span>
+                  </label>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                  {/* Headline & Subhead */}
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "14px" }}>
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                        Section Headline
+                      </label>
+                      <input
+                        type="text"
+                        value={form.videoHeadline || ""}
+                        onChange={(e) => handleChange("videoHeadline", e.target.value)}
+                        placeholder="See Bravon in Action"
+                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                        Section Subhead / Description
+                      </label>
+                      <input
+                        type="text"
+                        value={form.videoSubhead || ""}
+                        onChange={(e) => handleChange("videoSubhead", e.target.value)}
+                        placeholder="Watch high-speed 160 mm/s direct thermal printing..."
+                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Video URL & Upload */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Video File URL (MP4 / WebM / CDN Link)
+                    </label>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      <input
+                        type="text"
+                        value={form.videoUrl || ""}
+                        onChange={(e) => handleChange("videoUrl", e.target.value)}
+                        placeholder="/bravon-printer-demo.mp4 or https://..."
+                        style={{ flex: 1, minWidth: "220px", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", outline: "none" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => triggerImageUpload("videoUrl")}
+                        disabled={uploadingField === "videoUrl"}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          padding: "8px 14px",
+                          borderRadius: "6px",
+                          border: "1px solid rgba(124, 58, 237, 0.3)",
+                          backgroundColor: "rgba(124, 58, 237, 0.08)",
+                          color: "#7C3AED",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          cursor: uploadingField === "videoUrl" ? "wait" : "pointer",
+                        }}
+                      >
+                        <Upload size={14} />
+                        <span>{uploadingField === "videoUrl" ? "Uploading Video..." : "Upload Video (.mp4)"}</span>
+                      </button>
+
+                      {form.videoUrl !== "/bravon-printer-demo.mp4" && (
+                        <button
+                          type="button"
+                          onClick={() => handleChange("videoUrl", "/bravon-printer-demo.mp4")}
+                          style={{
+                            padding: "8px 12px",
+                            borderRadius: "6px",
+                            border: "1px solid rgba(0,0,0,0.1)",
+                            backgroundColor: "#FFFFFF",
+                            color: "#64748B",
+                            fontSize: "0.78rem",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Reset Demo
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Poster Thumbnail Image */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Video Poster Thumbnail Image
+                    </label>
+                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                      <input
+                        type="text"
+                        value={form.videoPosterUrl || ""}
+                        onChange={(e) => handleChange("videoPosterUrl", e.target.value)}
+                        placeholder="/bravon-shipping-action.jpg or image URL..."
+                        style={{ flex: 1, minWidth: "220px", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", outline: "none" }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => triggerImageUpload("videoPosterUrl")}
+                        disabled={uploadingField === "videoPosterUrl"}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          padding: "8px 14px",
+                          borderRadius: "6px",
+                          border: "1px solid rgba(124, 58, 237, 0.3)",
+                          backgroundColor: "rgba(124, 58, 237, 0.08)",
+                          color: "#7C3AED",
+                          fontSize: "0.8rem",
+                          fontWeight: 600,
+                          cursor: uploadingField === "videoPosterUrl" ? "wait" : "pointer",
+                        }}
+                      >
+                        <Upload size={14} />
+                        <span>{uploadingField === "videoPosterUrl" ? "Uploading..." : "Upload Poster"}</span>
+                      </button>
+                    </div>
+
+                    {/* Presets */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "6px" }}>
+                      <span style={{ fontSize: "0.7rem", color: "#94A3B8" }}>Poster presets:</span>
+                      {[
+                        { name: "Shipping Action", url: "/bravon-shipping-action.jpg" },
+                        { name: "White Ecosystem", url: "/bravon-ecosystem-white.jpg" },
+                        { name: "In The Box", url: "/bravon-in-the-box.jpg" },
+                      ].map((preset) => (
+                        <button
+                          key={preset.url}
+                          type="button"
+                          onClick={() => handleChange("videoPosterUrl", preset.url)}
+                          style={{
+                            border: form.videoPosterUrl === preset.url ? "1px solid #7C3AED" : "1px solid rgba(0,0,0,0.08)",
+                            backgroundColor: form.videoPosterUrl === preset.url ? "rgba(124, 58, 237, 0.08)" : "#FFFFFF",
+                            color: form.videoPosterUrl === preset.url ? "#7C3AED" : "#64748B",
+                            borderRadius: "4px",
+                            padding: "2px 8px",
+                            fontSize: "0.72rem",
+                            fontWeight: 500,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {preset.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Live Video Preview in Admin Card */}
+                  <div style={{ marginTop: "10px", padding: "14px", backgroundColor: "#0F172A", borderRadius: "10px" }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
+                      <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                        Live Video Player Preview
+                      </span>
+                      <span style={{ fontSize: "0.72rem", color: "#64748B" }}>
+                        Previewing {form.videoUrl || "default"}
+                      </span>
+                    </div>
+
+                    <div style={{ position: "relative", width: "100%", maxHeight: "320px", borderRadius: "8px", overflow: "hidden", backgroundColor: "#000000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      {form.videoUrl ? (
+                        <video
+                          key={form.videoUrl}
+                          src={form.videoUrl}
+                          poster={form.videoPosterUrl || undefined}
+                          controls
+                          playsInline
+                          preload="metadata"
+                          style={{ width: "100%", maxHeight: "320px", objectFit: "contain", display: "block" }}
+                        />
+                      ) : (
+                        <div style={{ padding: "40px 20px", textAlign: "center", color: "#64748B" }}>
+                          <Video size={32} style={{ margin: "0 auto 8px" }} />
+                          <p style={{ margin: 0, fontSize: "0.82rem" }}>No video URL set</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -1993,8 +2772,9 @@ export default function AdminPage() {
                     </label>
                     <input
                       type="text"
-                      value={form.socialInstagram}
+                      value={form.socialInstagram || ""}
                       onChange={(e) => handleChange("socialInstagram", e.target.value)}
+                      placeholder="https://instagram.com/bravoncity"
                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
                     />
                   </div>
@@ -2005,10 +2785,213 @@ export default function AdminPage() {
                     </label>
                     <input
                       type="text"
-                      value={form.socialTwitter}
+                      value={form.socialTwitter || ""}
                       onChange={(e) => handleChange("socialTwitter", e.target.value)}
+                      placeholder="https://x.com/bravoncity"
                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
                     />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      YouTube Channel URL
+                    </label>
+                    <input
+                      type="text"
+                      value={form.socialYoutube || ""}
+                      onChange={(e) => handleChange("socialYoutube", e.target.value)}
+                      placeholder="https://youtube.com/@bravoncity"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      TikTok Profile URL
+                    </label>
+                    <input
+                      type="text"
+                      value={form.socialTiktok || ""}
+                      onChange={(e) => handleChange("socialTiktok", e.target.value)}
+                      placeholder="https://tiktok.com/@bravoncity"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Facebook Page URL
+                    </label>
+                    <input
+                      type="text"
+                      value={form.socialFacebook || ""}
+                      onChange={(e) => handleChange("socialFacebook", e.target.value)}
+                      placeholder="https://facebook.com/bravoncity"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* WARRANTY & BUYER PROTECTION */}
+              <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: isMobile ? "18px 14px" : "22px 24px" }}>
+                <h2 style={{ fontSize: "1.05rem", fontWeight: 700, margin: "0 0 4px", color: "#0F172A" }}>
+                  Warranty & Buyer Protection Policies
+                </h2>
+                <p style={{ fontSize: "0.8rem", color: "#64748B", margin: "0 0 16px" }}>
+                  Displayed in the buyer protection banner and throughout checkout guarantees.
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "14px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Warranty Duration Title
+                    </label>
+                    <input
+                      type="text"
+                      value={form.warrantyDuration || ""}
+                      onChange={(e) => handleChange("warrantyDuration", e.target.value)}
+                      placeholder="2-Year Comprehensive"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Return Policy Headline
+                    </label>
+                    <input
+                      type="text"
+                      value={form.returnPolicyText || ""}
+                      onChange={(e) => handleChange("returnPolicyText", e.target.value)}
+                      placeholder="30-Day Risk-Free Money-Back Guarantee"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: isMobile ? "span 1" : "span 2" }}>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Warranty Detailed Coverage Summary
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={form.warrantyCoverageText || ""}
+                      onChange={(e) => handleChange("warrantyCoverageText", e.target.value)}
+                      placeholder="Covers thermal printhead, drive motor, motherboard & logic controllers with advance replacement."
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", resize: "vertical" }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* APPS & SOFTWARE DOWNLOAD URLS */}
+              <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: isMobile ? "18px 14px" : "22px 24px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "8px" }}>
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Download size={18} color="#7C3AED" />
+                      <h2 style={{ fontSize: "1.05rem", fontWeight: 700, margin: 0, color: "#0F172A" }}>
+                        Apps & Software Download URLs
+                      </h2>
+                    </div>
+                    <p style={{ fontSize: "0.8rem", color: "#64748B", margin: "4px 0 0" }}>
+                      Manage the download links and app store URLs presented on the /apps page and in the design studio.
+                    </p>
+                  </div>
+
+                  <a
+                    href="/apps"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      fontSize: "0.8rem",
+                      color: "#7C3AED",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                    }}
+                  >
+                    <span>Preview /apps</span>
+                    <ExternalLink size={13} />
+                  </a>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {/* Windows MSI (Default) */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "5px" }}>
+                      <label style={{ fontSize: "0.78rem", fontWeight: 600, color: "#475569" }}>
+                        Windows Installer (.msi) — Recommended Default
+                      </label>
+                      <span style={{ fontSize: "0.72rem", color: "#16A34A", fontWeight: 700 }}>Primary Download Button</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={form.windowsMsiUrl || ""}
+                      onChange={(e) => handleChange("windowsMsiUrl", e.target.value)}
+                      placeholder="/downloads/Bravon_Print_1.0.0_x64_en-US.msi"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  {/* Windows EXE (Secondary) */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      Windows Standalone Setup (.exe) — Secondary
+                    </label>
+                    <input
+                      type="text"
+                      value={form.windowsExeUrl || ""}
+                      onChange={(e) => handleChange("windowsExeUrl", e.target.value)}
+                      placeholder="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  {/* Mac DMG */}
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                      macOS Universal Installer (.dmg)
+                    </label>
+                    <input
+                      type="text"
+                      value={form.macDownloadUrl || ""}
+                      onChange={(e) => handleChange("macDownloadUrl", e.target.value)}
+                      placeholder="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "14px" }}>
+                    {/* iOS App Store */}
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                        Apple App Store URL (iOS)
+                      </label>
+                      <input
+                        type="text"
+                        value={form.iosAppStoreUrl || ""}
+                        onChange={(e) => handleChange("iosAppStoreUrl", e.target.value)}
+                        placeholder="https://apps.apple.com/app/bravon-print"
+                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                      />
+                    </div>
+
+                    {/* Android Google Play */}
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
+                        Google Play Store URL (Android)
+                      </label>
+                      <input
+                        type="text"
+                        value={form.androidPlayStoreUrl || ""}
+                        onChange={(e) => handleChange("androidPlayStoreUrl", e.target.value)}
+                        placeholder="https://play.google.com/store/apps/details?id=com.bravon.print"
+                        style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

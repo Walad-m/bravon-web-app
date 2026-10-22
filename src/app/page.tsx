@@ -17,6 +17,8 @@ import {
 import { useSiteConfig } from "@/context/ConfigContext";
 import IPhoneMockup from "@/components/IPhoneMockup";
 import DesktopAppMockup from "@/components/DesktopAppMockup";
+import VideoSection from "@/components/VideoSection";
+import SocialCommunitySection from "@/components/SocialCommunitySection";
 
 export default function HomePage() {
   const { config } = useSiteConfig();
@@ -861,7 +863,7 @@ export default function HomePage() {
             {/* Download Quick Actions */}
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
               <a
-                href="/downloads/Bravon_Print_1.0.0_universal.dmg"
+                href={config.macDownloadUrl || "/downloads/Bravon_Print_1.0.0_universal.dmg"}
                 download
                 className="btn-apple-primary"
                 style={{
@@ -880,7 +882,7 @@ export default function HomePage() {
                 <Apple size={16} /> macOS (.dmg)
               </a>
               <a
-                href="/downloads/Bravon_Print_1.0.0_x64_setup.exe"
+                href={config.windowsMsiUrl || "/downloads/Bravon_Print_1.0.0_x64_en-US.msi"}
                 download
                 className="btn-apple-secondary"
                 style={{
@@ -896,7 +898,7 @@ export default function HomePage() {
                   whiteSpace: "nowrap",
                 }}
               >
-                <Monitor size={16} /> Windows (.exe)
+                <Monitor size={16} /> Windows (.msi)
               </a>
             </div>
           </div>
@@ -1072,6 +1074,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* DYNAMIC HOMEPAGE VIDEO SHOWCASE (Configurable in Admin) */}
+      <VideoSection />
+
+      {/* DYNAMIC SOCIAL COMMUNITY & CHANNELS (Configurable in Admin) */}
+      <SocialCommunitySection />
 
       {/* 7. FINAL CALL TO ACTION */}
       <section

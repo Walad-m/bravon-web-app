@@ -158,3 +158,41 @@
   color: var(--bravon-purple);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
+
+/* ============================================================
+   PRINT STYLES (Single-Sheet Clean Thermal & Paper Receipts)
+   ============================================================ */
+@media print {
+  /* Hide all navigation, footer, and interactive web elements */
+  nav,
+  footer,
+  header,
+  .no-print,
+  .screen-only,
+  button,
+  .btn-apple-primary,
+  .btn-apple-secondary {
+    display: none !important;
+  }
+
+  body,
+  html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 10pt !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  @page {
+    margin: 5mm;
+    size: auto;
+  }
+}

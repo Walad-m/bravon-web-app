@@ -42,7 +42,9 @@ export async function POST(req: NextRequest) {
       session.customer_email ||
       "customer@example.com";
     const customerName = session.customer_details?.name || undefined;
-    const shippingDetails = session.collected_information?.shipping_details;
+    const shippingDetails =
+      session.shipping_details ||
+      session.collected_information?.shipping_details;
 
     const amountTotal = (session.amount_total || 0) / 100;
     const color = session.metadata?.color || "Arctic White";

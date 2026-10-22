@@ -12,11 +12,83 @@ export async function GET(req: NextRequest) {
   const targetId = sessionId || lookupId;
   if (targetId) {
     const orders = await readOrders();
-    const order = orders.find(
+    let order = orders.find(
       (o) =>
         o.id.toLowerCase() === targetId.toLowerCase() ||
         (o.paymentIntentId && o.paymentIntentId.toLowerCase() === targetId.toLowerCase())
     );
+
+    // Fallback: If not found in DB but is a valid Stripe Checkout Session ID, retrieve directly from Stripe
+    if (!order && sessionId && sessionId.startsWith("cs_") && process.env.STRIPE_SECRET_KEY) {
+      try {
+        const Stripe = (await import("stripe")).default;
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: "2025-02-24.acacia" as any,
+        });
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (session && session.payment_status === "paid") {
+          const customerEmail =
+            session.customer_details?.email ||
+            session.customer_email ||
+            "customer@example.com";
+          const customerName = session.customer_details?.name || undefined;
+          const shippingDetails =
+            session.shipping_details ||
+            session.collected_information?.shipping_details;
+          const amountTotal = (session.amount_total || 0) / 100;
+          const color = session.metadata?.color || "Arctic White";
+          const quantity = parseInt(session.metadata?.quantity || "1", 10);
+          const productName = session.metadata?.productName || "Bravon Thermal Printer";
+
+          const newOrder = {
+            id: session.id,
+            paymentIntentId:
+              typeof session.payment_intent === "string"
+                ? session.payment_intent
+                : undefined,
+            customerEmail,
+            customerName,
+            shipping: shippingDetails
+              ? {
+                  name: shippingDetails.name || undefined,
+                  phone: session.customer_details?.phone || undefined,
+                  address: shippingDetails.address
+                    ? {
+                        line1: shippingDetails.address.line1 || undefined,
+                        line2: shippingDetails.address.line2 || undefined,
+                        city: shippingDetails.address.city || undefined,
+                        state: shippingDetails.address.state || undefined,
+                        postal_code: shippingDetails.address.postal_code || undefined,
+                        country: shippingDetails.address.country || undefined,
+                      }
+                    : undefined,
+                }
+              : undefined,
+            items: [
+              {
+                id: "bravon-thermal-1",
+                name: productName,
+                color,
+                quantity,
+                unitPrice: amountTotal / (quantity || 1),
+                totalPrice: amountTotal,
+              },
+            ],
+            amountTotal,
+            currency: "USD",
+            paymentStatus: "paid" as const,
+            fulfillmentStatus: "unfulfilled" as const,
+            createdAt: new Date().toISOString(),
+          };
+
+          const { saveOrder } = await import("@/lib/orders");
+          await saveOrder(newOrder);
+          order = newOrder;
+        }
+      } catch (stripeErr) {
+        console.warn("Direct Stripe session fetch note:", stripeErr);
+      }
+    }
 
     if (!order) {
       return NextResponse.json({ success: false, error: "Order not found. Please check your order ID." }, { status: 404 });
