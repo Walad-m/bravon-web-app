@@ -17,8 +17,7 @@ import {
 import { useSiteConfig } from "@/context/ConfigContext";
 import IPhoneMockup from "@/components/IPhoneMockup";
 import DesktopAppMockup from "@/components/DesktopAppMockup";
-import VideoSection from "@/components/VideoSection";
-import SocialCommunitySection from "@/components/SocialCommunitySection";
+
 
 export default function HomePage() {
   const { config } = useSiteConfig();
@@ -1075,11 +1074,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* DYNAMIC HOMEPAGE VIDEO SHOWCASE (Configurable in Admin) */}
-      <VideoSection />
 
-      {/* DYNAMIC SOCIAL COMMUNITY & CHANNELS (Configurable in Admin) */}
-      <SocialCommunitySection />
 
       {/* 7. FINAL CALL TO ACTION */}
       <section
