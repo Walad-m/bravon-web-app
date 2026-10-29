@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { readOrders, updateOrderFulfillment } from "@/lib/orders";
+import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -19,12 +20,10 @@ export async function GET(req: NextRequest) {
     );
 
     // Fallback: If not found in DB but is a valid Stripe Checkout Session ID, retrieve directly from Stripe
-    if (!order && sessionId && sessionId.startsWith("cs_") && process.env.STRIPE_SECRET_KEY) {
+    if (!order && sessionId && sessionId.startsWith("cs_")) {
       try {
-        const Stripe = (await import("stripe")).default;
-        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-          apiVersion: "2025-02-24.acacia" as any,
-        });
+        const { getDynamicStripeClient } = await import("@/lib/envConfig");
+        const stripe = await getDynamicStripeClient();
         const session = await stripe.checkout.sessions.retrieve(sessionId);
         if (session && session.payment_status === "paid") {
           const customerEmail =
@@ -123,7 +122,7 @@ export async function GET(req: NextRequest) {
   // 2. Otherwise requires admin session
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -142,7 +141,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

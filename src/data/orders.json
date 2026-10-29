@@ -1,1 +1,53 @@
-[]
+[
+  {
+    "id": "cs_test_a1Sht74RzOD5T7FIO0DdgSeGE2whD00Pre4jimTXiQgf7UqaX60XIwSxVr",
+    "paymentIntentId": "pi_3UVBV0GiZw3KxIhK18217D7b",
+    "customerEmail": "stripe@example.com",
+    "customerName": "Jenny Rosen",
+    "items": [
+      {
+        "id": "bravon-thermal-1",
+        "name": "Bravon Thermal Printer",
+        "color": "Arctic White",
+        "quantity": 1,
+        "unitPrice": 30,
+        "totalPrice": 30
+      }
+    ],
+    "amountTotal": 30,
+    "currency": "USD",
+    "paymentStatus": "paid",
+    "fulfillmentStatus": "unfulfilled",
+    "createdAt": "2026-10-27T14:37:17.522Z"
+  },
+  {
+    "id": "cs_test_b1GC0tcRNwek2wPEeQnHhsKWWJ0ovxB3bPKrOQlGCmKIgRv95tg4jHq96t",
+    "paymentIntentId": "pi_3UTSwpGiZw3KxIhK1Uc6NYnm",
+    "customerEmail": "muqtarmuhaysin@gmail.com",
+    "customerName": "Muhaysin Muqtar",
+    "shipping": {
+      "name": "Muhaysin Muqtar",
+      "address": {
+        "line1": "As-434-3737",
+        "city": "Kumasi",
+        "postal_code": "00233",
+        "country": "FR"
+      }
+    },
+    "items": [
+      {
+        "id": "bravon-thermal-1",
+        "name": "Bravon Thermal Label Printer",
+        "color": "Arctic White",
+        "quantity": 1,
+        "unitPrice": 100,
+        "totalPrice": 100
+      }
+    ],
+    "amountTotal": 100,
+    "currency": "USD",
+    "paymentStatus": "paid",
+    "fulfillmentStatus": "unfulfilled",
+    "createdAt": "2026-10-22T20:51:54.312Z"
+  }
+]

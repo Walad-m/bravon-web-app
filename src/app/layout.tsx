@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ConfigProvider } from "@/context/ConfigContext";
+import { readServerConfig } from "@/lib/serverConfig";
 
 export const metadata: Metadata = {
   title: "Bravon Printer — Universal Thermal Label Printer",
@@ -17,11 +18,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const initialConfig = await readServerConfig();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -29,7 +32,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        <ConfigProvider>
+        <ConfigProvider initialConfig={initialConfig}>
           <Navbar />
           <main>{children}</main>
           <Footer />

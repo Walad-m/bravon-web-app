@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 import { readServerConfig } from "@/lib/serverConfig";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-  apiVersion: "2025-02-24.acacia" as any,
-});
+import { getDynamicStripeClient, getDynamicBaseUrl } from "@/lib/envConfig";
 
 export async function POST(req: NextRequest) {
   try {
     const { color, quantity = 1 } = await req.json();
     const config = await readServerConfig();
+    const stripe = await getDynamicStripeClient();
 
     const colorLabel =
       color === "white"
@@ -18,12 +15,7 @@ export async function POST(req: NextRequest) {
 
     const unitPriceCents = Math.round((config.price || 100) * 100);
 
-    // Dynamic origin detection ensures valid return URLs on production, custom domains, and local testing
-    const origin =
-      req.headers.get("origin") ||
-      req.nextUrl.origin ||
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      "https://bravoncity.com";
+    const origin = await getDynamicBaseUrl(req.headers.get("origin") || req.nextUrl.origin);
 
     // Customer only sees the exact product image for their selected color variant
     const exactProductImage =

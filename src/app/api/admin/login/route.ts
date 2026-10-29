@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAdminCredentials, readAuthConfig } from "@/lib/adminAuth";
+import { createAdminSessionToken } from "@/lib/sessionToken";
 
 export async function POST(req: Request) {
   try {
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     const cookieStore = await cookies();
     cookieStore.set({
       name: "bravon_admin_session",
-      value: "authenticated",
+      value: createAdminSessionToken(sessionDays),
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

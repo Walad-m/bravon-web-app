@@ -28,7 +28,7 @@
     --radius-pill: 980px;
   }
 
-  * {
+  *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -41,12 +41,23 @@
     background-color: var(--bg-white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
   }
 
   body {
     background-color: var(--bg-white);
     color: var(--text-primary);
     overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+    position: relative;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
+    height: auto;
   }
 }
 

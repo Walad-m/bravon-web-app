@@ -120,7 +120,7 @@ export default function AboutPage() {
             }}
           >
             <Image
-              src="/bravon-shipping-action.jpg"
+              src={config.productImageAction || "/bravon-shipping-action-v2.jpg"}
               alt="Bravon in action packing station"
               fill
               sizes="500px"

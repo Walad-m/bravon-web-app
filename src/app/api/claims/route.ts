@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { readClaims, createClaim, updateClaimStatus } from "@/lib/claims";
+import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -26,7 +27,7 @@ export async function GET(req: Request) {
   // Admin access check for viewing all claims
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json(
       { success: false, error: "Unauthorized" },
       { status: 401 }
@@ -76,7 +77,7 @@ export async function PATCH(req: Request) {
   // Admin only
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

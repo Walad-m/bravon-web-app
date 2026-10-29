@@ -75,35 +75,47 @@ export interface SiteConfig {
   taxNotice: string;
   shippingSpeedText: string;
 
+  // Editorial Section Copy
+  featureSectionEyebrow?: string;
+  featureSectionHeadline?: string;
+  featureSectionBody1?: string;
+  featureSectionBody2?: string;
+  anatomyHeadline?: string;
+  anatomySubhead?: string;
+  specsEyebrow?: string;
+  specsHeadline?: string;
+  softwareEyebrow?: string;
+  softwareHeadline?: string;
+
   // SEO & Social Metadata
   metaTitle: string;
   metaDescription: string;
 }
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
-  productName: "Bravon Thermal Label Printer",
-  productTagline: "Commercial Grade - Direct Thermal",
+  productName: "Bravon POS-9260-L Thermal Printer",
+  productTagline: "Portable Thermal Label & Slip Printer",
   productDescription:
-    "Prints crystal-clear 4x6\" shipping labels in 1 second. Zero ink, zero toner. Connects to your Mac, PC, iPhone, or Android via USB & Bluetooth.",
+    "Compact, multifunctional device combining portability and efficiency in a palm-sized form factor. Accommodates 30–110mm paper width for shipping labels, stickers, barcodes, and slips at 160mm/s with zero ink.",
   price: 100,
   comparePrice: 149,
   saveAmountText: "Save $49 Today",
-  defaultColor: "white",
+  defaultColor: "dark",
   whiteColorLabel: "Arctic White",
   darkColorLabel: "Dark Slate",
   stockStatus: "In Stock - Ready to Ship",
   freeShippingText: "Free 2-Day Priority Shipping On All Orders",
-  warrantyText: "2-Year Commercial Replacement Warranty",
+  warrantyText: "Return & Replacement Guarantee · 2-Year Warranty",
   returnPolicyText: "30-Day Risk-Free Money-Back Guarantee",
 
   showAnnouncement: true,
-  announcementTag: "Commercial Release",
-  announcementText: "Bravon Thermal Printer ($100). Flagship Direct Thermal Technology.",
+  announcementTag: "Commercial Model POS-9260-L",
+  announcementText: "Portable Palm-Sized Direct Thermal Label & Slip Printer ($100).",
 
-  heroEyebrow: "Bravon Thermal Printer",
-  heroHeadline: "Engineered to print. Built to last.",
+  heroEyebrow: "Bravon POS-9260-L · Commercial Thermal Label Printer",
+  heroHeadline: "Portable precision. Palm-sized power.",
   heroSubhead:
-    "Commercial high-speed thermal label printing. Zero ink, zero toner. Connects seamlessly to macOS, Windows, iOS & Android over USB and Bluetooth.",
+    "A compact, multifunctional device combining portability and 160mm/s efficiency in a palm-sized body. Supports 30–110mm media width with auto-retract paper setup and zero ink.",
 
   supportEmail: "support@bravoncity.com",
   supportPhone: "+1 (800) 555-BRAVON",
@@ -120,7 +132,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   videoHeadline: "See Bravon in Action",
   videoSubhead: "Watch high-speed 160 mm/s direct thermal printing, wireless BLE pairing, and instant label feeding in real-time.",
   videoUrl: "/bravon-printer-demo.mp4",
-  videoPosterUrl: "/bravon-shipping-action.jpg",
+  videoPosterUrl: "/bravon-shipping-action-v2.jpg",
 
   // Warranty & Returns
   warrantyDuration: "2-Year Comprehensive",
@@ -138,8 +150,8 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   heroImageDark: "/bravon-ecosystem-dark.jpg",
   productImageWhite: "/exact-printer-white.png",
   productImageDark: "/exact-printer-dark.png",
-  productImageInBox: "/bravon-in-the-box.jpg",
-  productImageAction: "/bravon-shipping-action.jpg",
+  productImageInBox: "/bravon-in-the-box-v3.jpg",
+  productImageAction: "/bravon-shipping-action-v2.jpg",
   storeLogoUrl: "/bravon-logo.png",
   storeFaviconUrl: "/bravon-app-icon.png",
   ogImageUrl: "/bravon-desktop-designer.png",
@@ -156,6 +168,6 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   shippingSpeedText: "Free 2-Day Priority Dispatch",
 
   // SEO & Social Metadata
-  metaTitle: "Bravon Printer — Universal Thermal Label Printer",
+  metaTitle: "Bravon POS-9260-L — Commercial Thermal Label Printer",
   metaDescription: "Commercial high-speed thermal label printing. Zero ink, zero toner. Connects seamlessly to macOS, Windows, iOS & Android over USB and Bluetooth.",
 };

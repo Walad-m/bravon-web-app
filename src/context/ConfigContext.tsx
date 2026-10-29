@@ -16,13 +16,19 @@ const ConfigContext = createContext<ConfigContextValue>({
   updateConfig: async () => false,
 });
 
-export function ConfigProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<SiteConfig>(DEFAULT_SITE_CONFIG);
-  const [loading, setLoading] = useState(true);
+export function ConfigProvider({
+  children,
+  initialConfig,
+}: {
+  children: React.ReactNode;
+  initialConfig?: SiteConfig;
+}) {
+  const [config, setConfig] = useState<SiteConfig>(initialConfig || DEFAULT_SITE_CONFIG);
+  const [loading, setLoading] = useState(!initialConfig);
 
   const fetchConfig = async () => {
     try {
-      const res = await fetch("/api/config", { cache: "no-store" });
+      const res = await fetch(`/api/config?_t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) return;
       const data = await res.json();
       if (data.success && data.config) {
@@ -37,6 +43,30 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     fetchConfig();
+
+    // Auto-refresh when tab receives focus or becomes visible
+    const handleVisibilityOrFocus = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        fetchConfig();
+      }
+    };
+
+    // Auto-refresh across tabs when admin saves changes
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "bravon_config_updated") {
+        fetchConfig();
+      }
+    };
+
+    window.addEventListener("focus", handleVisibilityOrFocus);
+    document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      window.removeEventListener("focus", handleVisibilityOrFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   const updateConfig = async (newConfig: Partial<SiteConfig>): Promise<boolean> => {
@@ -49,6 +79,9 @@ export function ConfigProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       if (data.success && data.config) {
         setConfig(data.config);
+        try {
+          localStorage.setItem("bravon_config_updated", Date.now().toString());
+        } catch {}
         return true;
       }
       return false;

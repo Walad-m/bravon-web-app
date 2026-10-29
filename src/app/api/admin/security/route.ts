@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { readAuthConfig, writeAuthConfig } from "@/lib/adminAuth";
+import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
 export async function GET() {
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
 
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
 
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

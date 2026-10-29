@@ -1,8 +1,10 @@
 import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
+import { getSupabaseAdmin, isSupabaseConfigured } from "./supabase";
 
 const AUTH_FILE_PATH = path.join(process.cwd(), "src", "data", "admin-auth.json");
+const TMP_AUTH_FILE_PATH = path.join("/tmp", "bravon-admin-auth.json");
 const DEFAULT_FALLBACK_PASSWORD = process.env.ADMIN_PASSWORD || "bravon2026";
 
 export interface SecurityAuditLog {
@@ -28,6 +30,8 @@ const DEFAULT_AUTH_CONFIG: AdminAuthConfig = {
   sessionMaxAgeDays: 7,
   securityLogs: [],
 };
+
+let memoryAuthConfig: AdminAuthConfig | null = null;
 
 // Base32 Alphabet for TOTP (RFC 4648)
 const BASE32_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
@@ -141,13 +145,54 @@ export function generateBackupCodes(): string[] {
 
 // Read Auth Config
 export async function readAuthConfig(): Promise<AdminAuthConfig> {
+  // 1. Supabase check
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const { data, error } = await supabase
+          .from("admin_auth")
+          .select("*")
+          .eq("id", "primary")
+          .single();
+
+        if (!error && data) {
+          const config: AdminAuthConfig = {
+            passwordHash: data.password_hash || undefined,
+            salt: data.salt || undefined,
+            twoFactorEnabled: Boolean(data.two_factor_enabled),
+            twoFactorSecret: data.two_factor_secret || undefined,
+            backupCodes: data.backup_codes || [],
+            sessionMaxAgeDays: Number(data.session_max_age_days || 7),
+            securityLogs: data.security_logs || [],
+          };
+          memoryAuthConfig = config;
+          return config;
+        }
+      }
+    } catch (err) {
+      console.warn("Supabase readAuthConfig warning:", err);
+    }
+  }
+
+  if (memoryAuthConfig) return memoryAuthConfig;
+
+  // 2. Local fallback
   try {
     const raw = await fs.readFile(AUTH_FILE_PATH, "utf-8");
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_AUTH_CONFIG, ...parsed };
-  } catch {
-    return DEFAULT_AUTH_CONFIG;
-  }
+    memoryAuthConfig = { ...DEFAULT_AUTH_CONFIG, ...parsed };
+    return memoryAuthConfig!;
+  } catch {}
+
+  try {
+    const raw = await fs.readFile(TMP_AUTH_FILE_PATH, "utf-8");
+    const parsed = JSON.parse(raw);
+    memoryAuthConfig = { ...DEFAULT_AUTH_CONFIG, ...parsed };
+    return memoryAuthConfig!;
+  } catch {}
+
+  return DEFAULT_AUTH_CONFIG;
 }
 
 // Write Auth Config
@@ -158,14 +203,46 @@ export async function writeAuthConfig(config: Partial<AdminAuthConfig>): Promise
     ...config,
   };
 
+  memoryAuthConfig = merged;
+
+  // 1. Supabase sync
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = getSupabaseAdmin();
+      if (supabase) {
+        const { error } = await supabase.from("admin_auth").upsert(
+          {
+            id: "primary",
+            password_hash: merged.passwordHash || null,
+            salt: merged.salt || null,
+            two_factor_enabled: merged.twoFactorEnabled,
+            two_factor_secret: merged.twoFactorSecret || null,
+            backup_codes: merged.backupCodes || [],
+            session_max_age_days: merged.sessionMaxAgeDays || 7,
+            security_logs: merged.securityLogs || [],
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "id" }
+        );
+        if (error) console.error("Supabase writeAuthConfig error:", error);
+      }
+    } catch (err) {
+      console.error("Supabase writeAuthConfig exception:", err);
+    }
+  }
+
+  // 2. Local fallback
   try {
     const dir = path.dirname(AUTH_FILE_PATH);
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(AUTH_FILE_PATH, JSON.stringify(merged, null, 2), "utf-8");
   } catch (err) {
-    console.error("Failed to write admin-auth.json:", err);
-    throw new Error("Failed to persist admin authentication config");
+    console.warn("Could not write to AUTH_FILE_PATH:", err);
   }
+
+  try {
+    await fs.writeFile(TMP_AUTH_FILE_PATH, JSON.stringify(merged, null, 2), "utf-8");
+  } catch {}
 
   return merged;
 }

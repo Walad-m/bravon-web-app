@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { readAuthConfig, writeAuthConfig, verifyPassword, hashPassword, logSecurityEvent } from "@/lib/adminAuth";
+import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
 const DEFAULT_FALLBACK_PASSWORD = process.env.ADMIN_PASSWORD || "bravon2026";
 
@@ -8,7 +9,7 @@ export async function POST(req: Request) {
   const cookieStore = await cookies();
   const session = cookieStore.get("bravon_admin_session");
 
-  if (!session || session.value !== "authenticated") {
+  if (!verifyAdminSessionToken(session?.value)) {
     return NextResponse.json(
       { success: false, error: "Unauthorized. Admin session required." },
       { status: 401 }

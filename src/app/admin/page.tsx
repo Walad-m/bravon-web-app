@@ -38,14 +38,19 @@ import {
   User,
   Video,
   Play,
-  FileText,
   Smartphone,
   Monitor,
+  Star,
+  ThumbsUp,
+  Trash2,
+  Plus,
 } from "lucide-react";
 import BravonLogo from "@/components/BravonLogo";
 import { DEFAULT_SITE_CONFIG, SiteConfig } from "@/lib/siteConfig";
+import { Review, ReviewsStats } from "@/lib/reviews";
+import EnvSettingsTab from "@/components/admin/EnvSettingsTab";
 
-type AdminTab = "orders" | "claims" | "product" | "media" | "hero" | "store" | "commerce" | "security";
+type AdminTab = "orders" | "claims" | "reviews" | "product" | "media" | "hero" | "store" | "commerce" | "env" | "security";
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
@@ -201,6 +206,117 @@ export default function AdminPage() {
     }
   };
 
+  // Customer Reviews state
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewsStats, setReviewsStats] = useState<ReviewsStats>({
+    averageRating: 5.0,
+    totalReviews: 0,
+    ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+    recommendRate: 100,
+  });
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [reviewFilter, setReviewFilter] = useState<"all" | "approved" | "pending" | "featured">("all");
+  const [showAddReviewModal, setShowAddReviewModal] = useState(false);
+  const [newReviewForm, setNewReviewForm] = useState({
+    author: "",
+    role: "",
+    rating: 5,
+    title: "",
+    comment: "",
+    variantPurchased: "Dark Slate",
+  });
+  const [submittingAdminReview, setSubmittingAdminReview] = useState(false);
+
+  const loadReviews = async () => {
+    setLoadingReviews(true);
+    try {
+      const res = await fetch("/api/reviews?status=all", { cache: "no-store" });
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.reviews || []);
+        if (data.stats) setReviewsStats(data.stats);
+      }
+    } catch (err) {
+      console.error("Error loading reviews:", err);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const handleUpdateReviewStatus = async (id: string, status: "approved" | "pending" | "rejected") => {
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action: "status", status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadReviews();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleToggleFeaturedReview = async (id: string, currentFeatured: boolean) => {
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action: "feature", isFeatured: !currentFeatured }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadReviews();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this customer review?")) return;
+    try {
+      const res = await fetch(`/api/reviews?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        loadReviews();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleCreateAdminReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingAdminReview(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReviewForm),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setShowAddReviewModal(false);
+        setNewReviewForm({
+          author: "",
+          role: "",
+          rating: 5,
+          title: "",
+          comment: "",
+          variantPurchased: "Dark Slate",
+        });
+        loadReviews();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingAdminReview(false);
+    }
+  };
+
   // Detect mobile viewport
   useEffect(() => {
     const handleResize = () => {
@@ -237,6 +353,7 @@ export default function AdminPage() {
         loadSecurityInfo();
         loadOrders();
         loadClaims();
+        loadReviews();
       }
     } catch {
       setAuthenticated(false);
@@ -333,6 +450,9 @@ export default function AdminPage() {
       if (data.success) {
         setForm(data.config);
         setSaveSuccess(true);
+        try {
+          localStorage.setItem("bravon_config_updated", Date.now().toString());
+        } catch {}
         setTimeout(() => setSaveSuccess(false), 3500);
       } else {
         setSaveError(data.error || "Failed to save");
@@ -508,11 +628,18 @@ export default function AdminPage() {
       icon: ShieldAlert,
       badge: claims.filter((c) => c.status === "pending").length > 0 ? `${claims.filter((c) => c.status === "pending").length} New` : undefined,
     },
+    {
+      id: "reviews",
+      label: "Customer Reviews",
+      icon: Star,
+      badge: reviews.filter((r) => r.status === "pending").length > 0 ? `${reviews.filter((r) => r.status === "pending").length} New` : undefined,
+    },
     { id: "product", label: "Product & Pricing", icon: Package },
     { id: "media", label: "Media & Images", icon: ImageIcon },
     { id: "hero", label: "Hero & Banners", icon: Megaphone },
     { id: "store", label: "Store & Contact", icon: Building },
     { id: "commerce", label: "Commerce & Inventory", icon: SlidersHorizontal },
+    { id: "env", label: "Environment & API Keys", icon: KeyRound },
     { id: "security", label: "Security & 2FA", icon: ShieldCheck, badge: twoFactorEnabled ? "2FA On" : undefined },
   ];
 
@@ -792,29 +919,31 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-                padding: "6px 12px",
-                borderRadius: "6px",
-                backgroundColor: saveSuccess ? "#10B981" : "#7C3AED",
-                color: "#FFFFFF",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                border: "none",
-                cursor: saving ? "wait" : "pointer",
-              }}
-            >
-              {saveSuccess ? <Check size={14} /> : <Save size={14} />}
-              {saveSuccess ? "Saved" : saving ? "..." : "Save"}
-            </button>
-          </div>
+          {!["orders", "claims", "reviews", "security", "env"].includes(activeTab) && (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  padding: "6px 12px",
+                  borderRadius: "6px",
+                  backgroundColor: saveSuccess ? "#10B981" : "#7C3AED",
+                  color: "#FFFFFF",
+                  fontSize: "0.8rem",
+                  fontWeight: 600,
+                  border: "none",
+                  cursor: saving ? "wait" : "pointer",
+                }}
+              >
+                {saveSuccess ? <Check size={14} /> : <Save size={14} />}
+                {saveSuccess ? "Saved" : saving ? "..." : "Save"}
+              </button>
+            </div>
+          )}
         </header>
       )}
 
@@ -1208,52 +1337,54 @@ export default function AdminPage() {
               </span>
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <button
-                type="button"
-                onClick={handleResetDefaults}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  border: "1px solid rgba(0, 0, 0, 0.1)",
-                  backgroundColor: "#FFFFFF",
-                  color: "#475569",
-                  fontSize: "0.8rem",
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
-              >
-                <RotateCcw size={13} />
-                <span>Reset Defaults</span>
-              </button>
+            {!["orders", "claims", "reviews", "security", "env"].includes(activeTab) && (
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <button
+                  type="button"
+                  onClick={handleResetDefaults}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "6px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#FFFFFF",
+                    color: "#475569",
+                    fontSize: "0.8rem",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                  }}
+                >
+                  <RotateCcw size={13} />
+                  <span>Reset Defaults</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  padding: "7px 16px",
-                  borderRadius: "6px",
-                  border: "none",
-                  backgroundColor: saveSuccess ? "#10B981" : "#7C3AED",
-                  color: "#FFFFFF",
-                  fontSize: "0.82rem",
-                  fontWeight: 600,
-                  cursor: saving ? "wait" : "pointer",
-                  boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)",
-                  transition: "all 0.15s ease",
-                }}
-              >
-                {saveSuccess ? <Check size={14} /> : <Save size={14} />}
-                <span>{saveSuccess ? "Changes Saved!" : saving ? "Saving..." : "Save Changes"}</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={saving}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "7px 16px",
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor: saveSuccess ? "#10B981" : "#7C3AED",
+                    color: "#FFFFFF",
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                    cursor: saving ? "wait" : "pointer",
+                    boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {saveSuccess ? <Check size={14} /> : <Save size={14} />}
+                  <span>{saveSuccess ? "Changes Saved!" : saving ? "Saving..." : "Save Changes"}</span>
+                </button>
+              </div>
+            )}
           </header>
         )}
 
@@ -2010,6 +2141,589 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* TAB: CUSTOMER REVIEWS & MODERATION */}
+          {activeTab === "reviews" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {/* Header Card */}
+              <div
+                style={{
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "12px",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  padding: isMobile ? "18px 14px" : "22px 24px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: isMobile ? "flex-start" : "center",
+                  flexDirection: isMobile ? "column" : "row",
+                  gap: "16px",
+                }}
+              >
+                <div>
+                  <h2 style={{ fontSize: "1.15rem", fontWeight: 700, margin: "0 0 6px", color: "#0F172A" }}>
+                    Customer Reviews & Moderation
+                  </h2>
+                  <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748B" }}>
+                    Manage customer reviews, moderate submissions, feature top testimonials on the homepage, and inspect buyer sentiment.
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={loadReviews}
+                    disabled={loadingReviews}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "8px 14px",
+                      borderRadius: "8px",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      backgroundColor: "#FFFFFF",
+                      color: "#475569",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <RefreshCw size={14} className={loadingReviews ? "animate-spin" : ""} />
+                    <span>Refresh</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddReviewModal(true)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      border: "none",
+                      backgroundColor: "#7C3AED",
+                      color: "#FFFFFF",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      boxShadow: "0 2px 8px rgba(124, 58, 237, 0.25)",
+                    }}
+                  >
+                    <Plus size={14} />
+                    <span>Add Review</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Review Metrics KPI Strip */}
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
+                  gap: "14px",
+                }}
+              >
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "16px" }}>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    Total Reviews
+                  </div>
+                  <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0F172A", marginTop: "4px" }}>
+                    {reviews.length}
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#16A34A", marginTop: "2px", fontWeight: 600 }}>
+                    {reviewsStats.totalReviews} live on storefront
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "16px" }}>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    Average Rating
+                  </div>
+                  <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0F172A", marginTop: "4px", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span>{reviewsStats.averageRating.toFixed(1)}</span>
+                    <Star size={20} fill="#F59E0B" color="#F59E0B" />
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#64748B", marginTop: "2px" }}>
+                    Out of 5.0 stars
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "16px" }}>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    5-Star Reviews
+                  </div>
+                  <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#0F172A", marginTop: "4px" }}>
+                    {reviewsStats.ratingCounts[5] || 0}
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#64748B", marginTop: "2px" }}>
+                    {reviewsStats.totalReviews > 0 ? Math.round(((reviewsStats.ratingCounts[5] || 0) / reviewsStats.totalReviews) * 100) : 0}% top satisfaction
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: "16px" }}>
+                  <div style={{ fontSize: "0.78rem", fontWeight: 600, color: "#64748B", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                    Recommendation
+                  </div>
+                  <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#7C3AED", marginTop: "4px" }}>
+                    {reviewsStats.recommendRate}%
+                  </div>
+                  <div style={{ fontSize: "0.75rem", color: "#64748B", marginTop: "2px" }}>
+                    Recommend to colleagues
+                  </div>
+                </div>
+              </div>
+
+              {/* Filter Tabs */}
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                {[
+                  { id: "all", label: `All Reviews (${reviews.length})` },
+                  { id: "pending", label: `Pending Moderation (${reviews.filter((r) => r.status === "pending").length})` },
+                  { id: "approved", label: `Approved & Live (${reviews.filter((r) => r.status === "approved").length})` },
+                  { id: "featured", label: `Featured on Home (${reviews.filter((r) => r.isFeatured).length})` },
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setReviewFilter(f.id as any)}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      border: reviewFilter === f.id ? "1px solid #7C3AED" : "1px solid rgba(0,0,0,0.08)",
+                      backgroundColor: reviewFilter === f.id ? "#7C3AED" : "#FFFFFF",
+                      color: reviewFilter === f.id ? "#FFFFFF" : "#475569",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Reviews List */}
+              {loadingReviews ? (
+                <div style={{ padding: "40px", textAlign: "center", backgroundColor: "#FFFFFF", borderRadius: "12px", color: "#94A3B8" }}>
+                  Loading reviews...
+                </div>
+              ) : reviews.length === 0 ? (
+                <div style={{ padding: "40px", textAlign: "center", backgroundColor: "#FFFFFF", borderRadius: "12px", color: "#64748B" }}>
+                  No customer reviews found. Click &quot;Add Review&quot; above to create one.
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {reviews
+                    .filter((r) => {
+                      if (reviewFilter === "all") return true;
+                      if (reviewFilter === "pending") return r.status === "pending";
+                      if (reviewFilter === "approved") return r.status === "approved";
+                      if (reviewFilter === "featured") return r.isFeatured;
+                      return true;
+                    })
+                    .map((rev) => {
+                      const initials = rev.author
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .substring(0, 2)
+                        .toUpperCase();
+
+                      return (
+                        <div
+                          key={rev.id}
+                          style={{
+                            backgroundColor: "#FFFFFF",
+                            borderRadius: "12px",
+                            border: "1px solid rgba(0,0,0,0.08)",
+                            padding: isMobile ? "16px 14px" : "20px 24px",
+                            boxShadow: "0 2px 6px rgba(15, 23, 42, 0.02)",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              flexWrap: "wrap",
+                              gap: "12px",
+                              marginBottom: "12px",
+                            }}
+                          >
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                              <div
+                                style={{
+                                  width: "38px",
+                                  height: "38px",
+                                  borderRadius: "50%",
+                                  backgroundColor: "#0F172A",
+                                  color: "#FFFFFF",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "0.85rem",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {initials}
+                              </div>
+                              <div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                                  <span style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0F172A" }}>
+                                    {rev.author}
+                                  </span>
+                                  {rev.verified && (
+                                    <span style={{ fontSize: "0.72rem", color: "#16A34A", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "2px" }}>
+                                      <CheckCircle2 size={12} fill="#16A34A" color="#FFFFFF" /> Verified
+                                    </span>
+                                  )}
+                                  <span
+                                    style={{
+                                      fontSize: "0.72rem",
+                                      fontWeight: 600,
+                                      color: "#475569",
+                                      backgroundColor: "#F1F5F9",
+                                      padding: "1px 6px",
+                                      borderRadius: "4px",
+                                    }}
+                                  >
+                                    Finish: {rev.variantPurchased || "Dark Slate"}
+                                  </span>
+                                </div>
+                                <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
+                                  {rev.role || "Verified Buyer"} · {rev.date}
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Status & Featured Badges */}
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                              {rev.isFeatured && (
+                                <span
+                                  style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "4px",
+                                    padding: "3px 8px",
+                                    borderRadius: "999px",
+                                    backgroundColor: "rgba(124, 58, 237, 0.1)",
+                                    color: "#7C3AED",
+                                    fontSize: "0.72rem",
+                                    fontWeight: 700,
+                                  }}
+                                >
+                                  <Star size={11} fill="#7C3AED" /> Featured on Home
+                                </span>
+                              )}
+                              <span
+                                style={{
+                                  padding: "3px 8px",
+                                  borderRadius: "999px",
+                                  fontSize: "0.72rem",
+                                  fontWeight: 700,
+                                  backgroundColor:
+                                    rev.status === "approved"
+                                      ? "rgba(22, 163, 74, 0.1)"
+                                      : rev.status === "pending"
+                                      ? "rgba(217, 119, 6, 0.1)"
+                                      : "rgba(239, 68, 68, 0.1)",
+                                  color:
+                                    rev.status === "approved"
+                                      ? "#16A34A"
+                                      : rev.status === "pending"
+                                      ? "#D97706"
+                                      : "#DC2626",
+                                }}
+                              >
+                                {rev.status === "approved" ? "Live" : rev.status === "pending" ? "Pending" : "Hidden"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Star Rating & Title */}
+                          <div style={{ marginBottom: "8px" }}>
+                            <div style={{ display: "flex", gap: "2px", marginBottom: "4px" }}>
+                              {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                  key={s}
+                                  size={14}
+                                  fill={s <= rev.rating ? "#F59E0B" : "none"}
+                                  color={s <= rev.rating ? "#F59E0B" : "#CBD5E1"}
+                                />
+                              ))}
+                            </div>
+                            <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0F172A", margin: "0 0 4px" }}>
+                              &ldquo;{rev.title}&rdquo;
+                            </h4>
+                            <p style={{ fontSize: "0.85rem", color: "#475569", lineHeight: 1.5, margin: 0 }}>
+                              {rev.comment}
+                            </p>
+                          </div>
+
+                          {/* Action Buttons Bar */}
+                          <div
+                            style={{
+                              borderTop: "1px solid rgba(0,0,0,0.06)",
+                              paddingTop: "12px",
+                              marginTop: "12px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              flexWrap: "wrap",
+                              gap: "8px",
+                            }}
+                          >
+                            <span style={{ fontSize: "0.75rem", color: "#94A3B8", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                              <ThumbsUp size={12} /> {rev.helpfulCount || 0} found helpful
+                            </span>
+
+                            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                              <button
+                                type="button"
+                                onClick={() => handleToggleFeaturedReview(rev.id, rev.isFeatured)}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "4px",
+                                  padding: "5px 10px",
+                                  borderRadius: "6px",
+                                  border: rev.isFeatured ? "1px solid #7C3AED" : "1px solid rgba(0,0,0,0.1)",
+                                  backgroundColor: rev.isFeatured ? "rgba(124, 58, 237, 0.08)" : "#FFFFFF",
+                                  color: rev.isFeatured ? "#7C3AED" : "#64748B",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 600,
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <Star size={12} fill={rev.isFeatured ? "#7C3AED" : "none"} />
+                                <span>{rev.isFeatured ? "Unfeature" : "Feature on Home"}</span>
+                              </button>
+
+                              {rev.status !== "approved" && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateReviewStatus(rev.id, "approved")}
+                                  style={{
+                                    padding: "5px 12px",
+                                    borderRadius: "6px",
+                                    border: "1px solid #16A34A",
+                                    backgroundColor: "rgba(22, 163, 74, 0.08)",
+                                    color: "#16A34A",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  Approve & Publish
+                                </button>
+                              )}
+
+                              {rev.status !== "rejected" && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateReviewStatus(rev.id, "rejected")}
+                                  style={{
+                                    padding: "5px 12px",
+                                    borderRadius: "6px",
+                                    border: "1px solid rgba(0,0,0,0.1)",
+                                    backgroundColor: "#FFFFFF",
+                                    color: "#64748B",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 600,
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  Hide / Reject
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReview(rev.id)}
+                                style={{
+                                  padding: "5px 8px",
+                                  borderRadius: "6px",
+                                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                                  backgroundColor: "rgba(239, 68, 68, 0.05)",
+                                  color: "#DC2626",
+                                  fontSize: "0.75rem",
+                                  cursor: "pointer",
+                                  display: "flex",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+
+              {/* Add Review Modal for Admin */}
+              {showAddReviewModal && (
+                <div
+                  style={{
+                    position: "fixed",
+                    inset: 0,
+                    zIndex: 9999,
+                    backgroundColor: "rgba(15, 23, 42, 0.65)",
+                    backdropFilter: "blur(6px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "20px",
+                  }}
+                  onClick={(e) => {
+                    if (e.target === e.currentTarget) setShowAddReviewModal(false);
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "#FFFFFF",
+                      borderRadius: "16px",
+                      padding: "28px",
+                      maxWidth: "520px",
+                      width: "100%",
+                      boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+                      maxHeight: "90vh",
+                      overflowY: "auto",
+                      position: "relative",
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setShowAddReviewModal(false)}
+                      style={{
+                        position: "absolute",
+                        top: "16px",
+                        right: "16px",
+                        background: "none",
+                        border: "none",
+                        color: "#64748B",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <X size={20} />
+                    </button>
+
+                    <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
+                      Add Customer Review / Testimonial
+                    </h3>
+                    <p style={{ fontSize: "0.85rem", color: "#64748B", margin: "0 0 20px" }}>
+                      Manually add verified customer feedback to display on the storefront.
+                    </p>
+
+                    <form onSubmit={handleCreateAdminReview}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                            Customer Name *
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={newReviewForm.author}
+                            onChange={(e) => setNewReviewForm({ ...newReviewForm, author: e.target.value })}
+                            placeholder="e.g. Jordan Hayes"
+                            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem" }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                            Role / Business
+                          </label>
+                          <input
+                            type="text"
+                            value={newReviewForm.role}
+                            onChange={(e) => setNewReviewForm({ ...newReviewForm, role: e.target.value })}
+                            placeholder="e.g. Shopify Store Owner"
+                            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem" }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "14px" }}>
+                        <div>
+                          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                            Rating (1 to 5 Stars)
+                          </label>
+                          <select
+                            value={newReviewForm.rating}
+                            onChange={(e) => setNewReviewForm({ ...newReviewForm, rating: Number(e.target.value) })}
+                            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", backgroundColor: "#FFFFFF" }}
+                          >
+                            <option value={5}>5 Stars — Outstanding</option>
+                            <option value={4}>4 Stars — Great</option>
+                            <option value={3}>3 Stars — Average</option>
+                            <option value={2}>2 Stars — Poor</option>
+                            <option value={1}>1 Star — Bad</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                            Purchased Finish
+                          </label>
+                          <select
+                            value={newReviewForm.variantPurchased}
+                            onChange={(e) => setNewReviewForm({ ...newReviewForm, variantPurchased: e.target.value })}
+                            style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", backgroundColor: "#FFFFFF" }}
+                          >
+                            <option value="Dark Slate">Dark Slate</option>
+                            <option value="Arctic White">Arctic White</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div style={{ marginBottom: "14px" }}>
+                        <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                          Review Headline *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={newReviewForm.title}
+                          onChange={(e) => setNewReviewForm({ ...newReviewForm, title: e.target.value })}
+                          placeholder="e.g. Best investment for our daily order fulfillment"
+                          style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem" }}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: "20px" }}>
+                        <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 600, color: "#334155", marginBottom: "5px" }}>
+                          Review Comment *
+                        </label>
+                        <textarea
+                          required
+                          rows={4}
+                          value={newReviewForm.comment}
+                          onChange={(e) => setNewReviewForm({ ...newReviewForm, comment: e.target.value })}
+                          placeholder="Write the detailed testimonial..."
+                          style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", resize: "vertical" }}
+                        />
+                      </div>
+
+                      <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                        <button
+                          type="button"
+                          onClick={() => setShowAddReviewModal(false)}
+                          style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", backgroundColor: "#FFFFFF", color: "#475569", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer" }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={submittingAdminReview}
+                          style={{ padding: "8px 20px", borderRadius: "6px", border: "none", backgroundColor: "#7C3AED", color: "#FFFFFF", fontSize: "0.85rem", fontWeight: 600, cursor: "pointer" }}
+                        >
+                          {submittingAdminReview ? "Saving..." : "Add Review"}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* TAB 1: PRODUCT & PRICING */}
           {activeTab === "product" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -2026,30 +2740,65 @@ export default function AdminPage() {
                       type="text"
                       value={form.productName}
                       onChange={(e) => handleChange("productName", e.target.value)}
+                      placeholder="Bravon POS-9260-L Thermal Printer"
                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
                     />
                   </div>
 
                   <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "5px" }}>
+                      <label style={{ fontSize: "0.78rem", fontWeight: 600, color: "#475569" }}>
+                        Homepage Hero Headline (H1)
+                      </label>
+                      <span style={{ fontSize: "0.7rem", color: "#7C3AED", fontWeight: 600 }}>Displayed prominently at top of homepage</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={form.heroHeadline}
+                      onChange={(e) => handleChange("heroHeadline", e.target.value)}
+                      placeholder="Portable precision. Palm-sized power."
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
+                    />
+                  </div>
+
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "5px" }}>
+                      <label style={{ fontSize: "0.78rem", fontWeight: 600, color: "#475569" }}>
+                        Homepage Hero Subhead / Summary
+                      </label>
+                      <span style={{ fontSize: "0.7rem", color: "#7C3AED", fontWeight: 600 }}>Displayed directly beneath hero title</span>
+                    </div>
+                    <textarea
+                      rows={3}
+                      value={form.heroSubhead}
+                      onChange={(e) => handleChange("heroSubhead", e.target.value)}
+                      placeholder="A compact, multifunctional device combining portability and 160mm/s efficiency in a palm-sized body..."
+                      style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", resize: "vertical" }}
+                    />
+                  </div>
+
+                  <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
-                      Tagline / Eyebrow
+                      Tagline / Category Eyebrow
                     </label>
                     <input
                       type="text"
                       value={form.productTagline}
                       onChange={(e) => handleChange("productTagline", e.target.value)}
+                      placeholder="Portable Thermal Label & Slip Printer"
                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box" }}
                     />
                   </div>
 
                   <div>
                     <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "5px" }}>
-                      Product Description
+                      Product Buy Page Description
                     </label>
                     <textarea
                       rows={3}
                       value={form.productDescription}
                       onChange={(e) => handleChange("productDescription", e.target.value)}
+                      placeholder="Detailed product overview used in the /product buy box and technical specifications"
                       style={{ width: "100%", padding: "9px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.88rem", outline: "none", boxSizing: "border-box", resize: "vertical" }}
                     />
                   </div>
@@ -2222,18 +2971,18 @@ export default function AdminPage() {
                       key: "productImageInBox" as keyof SiteConfig,
                       label: "What's In The Box Shot",
                       desc: "Packaging and bundled accessories overview image",
-                      defaultUrl: "/bravon-in-the-box.jpg",
+                      defaultUrl: "/bravon-in-the-box-v3.jpg",
                       presets: [
-                        { name: "In The Box Flatlay", url: "/bravon-in-the-box.jpg" },
+                        { name: "In The Box Flatlay", url: "/bravon-in-the-box-v3.jpg" },
                       ],
                     },
                     {
                       key: "productImageAction" as keyof SiteConfig,
                       label: "In Action / Small Business Setup",
                       desc: "High-speed shipping station lifestyle photo",
-                      defaultUrl: "/bravon-shipping-action.jpg",
+                      defaultUrl: "/bravon-shipping-action-v2.jpg",
                       presets: [
-                        { name: "Shipping Station", url: "/bravon-shipping-action.jpg" },
+                        { name: "Shipping Station", url: "/bravon-shipping-action-v2.jpg" },
                       ],
                     },
                     {
@@ -2521,7 +3270,7 @@ export default function AdminPage() {
                         type="text"
                         value={form.videoPosterUrl || ""}
                         onChange={(e) => handleChange("videoPosterUrl", e.target.value)}
-                        placeholder="/bravon-shipping-action.jpg or image URL..."
+                        placeholder="/bravon-shipping-action-v2.jpg or image URL..."
                         style={{ flex: 1, minWidth: "220px", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(0,0,0,0.12)", fontSize: "0.85rem", outline: "none" }}
                       />
                       <button
@@ -2551,9 +3300,9 @@ export default function AdminPage() {
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginTop: "6px" }}>
                       <span style={{ fontSize: "0.7rem", color: "#94A3B8" }}>Poster presets:</span>
                       {[
-                        { name: "Shipping Action", url: "/bravon-shipping-action.jpg" },
+                        { name: "Shipping Action", url: "/bravon-shipping-action-v2.jpg" },
                         { name: "White Ecosystem", url: "/bravon-ecosystem-white.jpg" },
-                        { name: "In The Box", url: "/bravon-in-the-box.jpg" },
+                        { name: "In The Box", url: "/bravon-in-the-box-v3.jpg" },
                       ].map((preset) => (
                         <button
                           key={preset.url}
@@ -3136,6 +3885,11 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* TAB: ENVIRONMENT & API KEYS */}
+          {activeTab === "env" && (
+            <EnvSettingsTab isMobile={isMobile} />
+          )}
+
           {/* TAB 6: SECURITY & 2FA (Requested by user) */}
           {activeTab === "security" && (
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -3510,7 +4264,7 @@ export default function AdminPage() {
         </div>
 
         {/* MOBILE BOTTOM FLOATING ACTION BAR (Thumb-friendly saving) */}
-        {isMobile && (
+        {isMobile && !["orders", "claims", "reviews", "security", "env"].includes(activeTab) && (
           <div
             style={{
               position: "fixed",

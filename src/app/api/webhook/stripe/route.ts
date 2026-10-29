@@ -2,16 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { saveOrder } from "@/lib/orders";
 import { readServerConfig, writeServerConfig } from "@/lib/serverConfig";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder", {
-  apiVersion: "2025-02-24.acacia" as any,
-});
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+import { getDynamicStripeClient, getDynamicWebhookSecret } from "@/lib/envConfig";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
+  const webhookSecret = await getDynamicWebhookSecret();
+  const stripe = await getDynamicStripeClient();
 
   let event: Stripe.Event;
 
