@@ -319,8 +319,8 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={selectedColor === "white" ? (config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg") : (config.frontFeedImageDark || "/bravon-hero-studio-dark.jpg")}
-              alt={`${config.productName || "Bravon POS-9260-L"} Commercial Thermal Label Printer in ${selectedColor === "white" ? "Arctic White" : "Dark Slate"} with 4x6 shipping label`}
+              src={config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg"}
+              alt={`${config.productName || "Bravon POS-9260-L"} Commercial Thermal Label Printer in Arctic White with 4x6 shipping label`}
               fill
               style={{ objectFit: "contain", objectPosition: "center" }}
               priority
