@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Type,
   Barcode,
@@ -81,6 +82,11 @@ import { DEFAULT_DESIGN_TEMPLATES } from "@/data/designTemplates";
 import { useSiteConfig } from "@/context/ConfigContext";
 
 export default function DesignStudioPage() {
+  const router = useRouter();
+  useEffect(() => {
+    router.replace("/");
+  }, [router]);
+
   const { config } = useSiteConfig();
   // Active App Section / View: 'dashboard' | 'editor' | 'templates' | 'printers' | 'history' | 'settings'
   const [activeView, setActiveView] = useState<"dashboard" | "editor" | "templates" | "printers" | "history" | "settings">("dashboard");

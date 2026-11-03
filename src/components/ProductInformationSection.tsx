@@ -227,62 +227,88 @@ export default function ProductInformationSection() {
           style={{
             backgroundColor: "#FAFAFC",
             borderTop: "1px solid rgba(0, 0, 0, 0.06)",
-            padding: "20px 24px 24px",
+            padding: "18px 20px 22px",
           }}
         >
-          {/* Labeled Component Selector Pills */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              flexWrap: "wrap",
-              marginBottom: "16px",
-            }}
-          >
-            <span
+          {/* Labeled Component Selector Pills — Smooth Horizontal Scroll on Mobile */}
+          <div style={{ marginBottom: "14px" }}>
+            <div
               style={{
-                fontSize: "0.76rem",
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                color: "var(--text-secondary)",
-                marginRight: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "8px",
               }}
             >
-              Inspect Part:
-            </span>
-            {HARDWARE_COMPONENTS.map((comp) => {
-              const isSelected = activeComponentId === comp.id;
-              const IconComp = comp.icon;
-              return (
-                <button
-                  key={comp.id}
-                  type="button"
-                  onClick={() => setActiveComponentId(comp.id)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "6px 14px",
-                    fontSize: "0.82rem",
-                    fontWeight: 600,
-                    borderRadius: "980px",
-                    border: isSelected
-                      ? "1px solid var(--bravon-purple)"
-                      : "1px solid rgba(0, 0, 0, 0.08)",
-                    backgroundColor: isSelected ? "var(--bravon-purple-subtle)" : "#FFFFFF",
-                    color: isSelected ? "var(--bravon-purple)" : "#334155",
-                    cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    boxShadow: isSelected ? "0 2px 8px rgba(124, 58, 237, 0.12)" : "none",
-                  }}
-                >
-                  <IconComp size={13} />
-                  {comp.name}
-                </button>
-              );
-            })}
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                Inspect Part:
+              </span>
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  color: "#94A3B8",
+                  fontWeight: 500,
+                }}
+              >
+                Swipe to explore parts →
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                overflowX: "auto",
+                flexWrap: "nowrap",
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                paddingBottom: "4px",
+              }}
+            >
+              {HARDWARE_COMPONENTS.map((comp) => {
+                const isSelected = activeComponentId === comp.id;
+                const IconComp = comp.icon;
+                return (
+                  <button
+                    key={comp.id}
+                    type="button"
+                    onClick={() => setActiveComponentId(comp.id)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "7px 14px",
+                      fontSize: "0.82rem",
+                      fontWeight: 600,
+                      borderRadius: "980px",
+                      border: isSelected
+                        ? "1px solid var(--bravon-purple)"
+                        : "1px solid rgba(0, 0, 0, 0.08)",
+                      backgroundColor: isSelected ? "var(--bravon-purple-subtle)" : "#FFFFFF",
+                      color: isSelected ? "var(--bravon-purple)" : "#334155",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      boxShadow: isSelected ? "0 2px 8px rgba(124, 58, 237, 0.12)" : "none",
+                      flexShrink: 0,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <IconComp size={13} />
+                    {comp.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Active Component Deep Dive Card */}

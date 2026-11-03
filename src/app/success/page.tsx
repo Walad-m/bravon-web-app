@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle, Package, Sparkles, Printer } from "lucide-react";
+import { CheckCircle, Package, Sparkles, Printer, Truck } from "lucide-react";
 import Link from "next/link";
 import { useSiteConfig } from "@/context/ConfigContext";
 
@@ -416,8 +416,8 @@ function SuccessContent() {
           flexWrap: "wrap",
         }}
       >
-        <Link href="/design" className="btn-apple-primary">
-          <Sparkles size={16} /> Open Design Studio
+        <Link href="/track" className="btn-apple-primary">
+          <Truck size={16} /> Track Order Status
         </Link>
         <Link href="/" className="btn-apple-secondary">
           Back to Store

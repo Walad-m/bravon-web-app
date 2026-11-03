@@ -520,7 +520,10 @@ export default function HomePage() {
               </p>
 
               {/* 4 Feature Points */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "28px" }}>
+              <div
+                className="sticker-feature-grid"
+                style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "28px" }}
+              >
                 <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                     <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -573,24 +576,7 @@ export default function HomePage() {
               {/* Action Buttons */}
               <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
                 <Link href="/product" className="btn-apple-primary hero-btn-mobile">
-                  Get Started ({config.currencySymbol || "$"}{config.price})
-                </Link>
-                <Link
-                  href="/design"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "12px 20px",
-                    borderRadius: "980px",
-                    fontSize: "0.9rem",
-                    fontWeight: 600,
-                    color: "var(--bravon-purple)",
-                    backgroundColor: "rgba(124, 58, 237, 0.08)",
-                    textDecoration: "none",
-                  }}
-                >
-                  Open Label & Sticker Studio <ArrowRight size={15} />
+                  Order {config.productName || "Bravon POS-9260-L"} ({config.currencySymbol || "$"}{config.price})
                 </Link>
               </div>
             </div>
@@ -1268,65 +1254,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Browser Studio Banner Card */}
-        <div
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: "24px",
-            border: "1px solid rgba(0, 0, 0, 0.08)",
-            padding: "24px 32px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "16px",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.03)",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <div style={{ width: "42px", height: "42px", borderRadius: "12px", backgroundColor: "var(--bg-apple)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Globe size={22} color="var(--bravon-purple)" />
-            </div>
-            <div>
-              <p style={{ margin: 0, fontWeight: 700, fontSize: "1.05rem", color: "#1D1D1F" }}>
-                Prefer to design in your browser with zero installation?
-              </p>
-              <p style={{ margin: "2px 0 0", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
-                Launch the Bravon Web Studio directly in Chrome, Safari, Edge, or Firefox.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-            <Link
-              href="/design"
-              className="btn-apple-primary"
-              style={{
-                padding: "10px 20px",
-                fontSize: "0.9rem",
-                fontWeight: 600,
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-            >
-              Open Web Studio <ArrowRight size={14} />
-            </Link>
-            <Link
-              href="/apps"
-              style={{
-                padding: "10px 16px",
-                fontSize: "0.88rem",
-                fontWeight: 600,
-                color: "var(--bravon-purple)",
-                textDecoration: "none",
-              }}
-            >
-              View All Apps &amp; Downloads →
-            </Link>
-          </div>
-        </div>
       </section>
 
       {/* 7. PLATFORMS & CARRIERS MARQUEE */}
@@ -1667,6 +1594,10 @@ export default function HomePage() {
           .box-items-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 10px !important;
+          }
+          .sticker-feature-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
           }
           .spec-metric-card {
             padding: 12px 6px;
