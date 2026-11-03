@@ -45,22 +45,19 @@ export default function ProductPage() {
           : config.productImageWhite || "/bravon-pos9260-white.jpg",
     },
     {
-      id: "action",
-      title: "In Action",
-      subtitle: "Fulfillment Desk",
-      src: config.productImageAction || "/bravon-shipping-action-v2.jpg",
+      id: "front-feed",
+      title: "Front Output",
+      subtitle: selectedColor === "dark" ? "4×6 Dark Feed" : "4×6 White Feed",
+      src:
+        selectedColor === "dark"
+          ? config.frontFeedImageDark || "/bravon-hero-studio-dark.jpg"
+          : config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg",
     },
     {
-      id: "anatomy",
-      title: "Internal Anatomy",
-      subtitle: "Head & Rollers",
-      src: "/bravon-pos9260-anatomy-slate.png",
-    },
-    {
-      id: "ports",
-      title: "Interface Ports",
-      subtitle: "Type-C & DC",
-      src: "/bravon-pos9260-white-back.jpg",
+      id: "desk-setup",
+      title: "Desk Setup",
+      subtitle: "Roll Stand Holder",
+      src: "/bravon-shipping-action-dark-stand.jpg",
     },
     {
       id: "unboxing",
