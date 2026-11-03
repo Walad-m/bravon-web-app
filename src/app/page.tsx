@@ -428,7 +428,7 @@ export default function HomePage() {
               src={config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels`}
               fill
-              style={{ objectFit: "contain", objectPosition: "center", padding: "16px" }}
+              style={{ objectFit: "cover", objectPosition: "center" }}
               sizes="(max-width: 960px) 100vw, 680px"
             />
           </div>
