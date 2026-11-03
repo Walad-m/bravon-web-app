@@ -92,8 +92,8 @@ export default function ProductInformationSection() {
     <section
       id="product-information"
       style={{
-        maxWidth: "1140px",
-        margin: "0 auto 80px",
+        maxWidth: "1340px",
+        margin: "0 auto 60px",
         padding: "0 16px",
       }}
     >
@@ -135,13 +135,13 @@ export default function ProductInformationSection() {
         </p>
       </div>
 
-      {/* Main Studio White Showcase Card — Clean, Spacious & Uncluttered */}
+      {/* Main Studio White Showcase Card — Standardized 28px Radius Shell */}
       <div
         style={{
           backgroundColor: "#FFFFFF",
-          borderRadius: "24px",
-          border: "1px solid rgba(0, 0, 0, 0.08)",
-          boxShadow: "0 20px 60px -15px rgba(15, 23, 42, 0.06)",
+          borderRadius: "28px",
+          border: "1px solid rgba(0, 0, 0, 0.06)",
+          boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.06)",
           overflow: "hidden",
         }}
       >

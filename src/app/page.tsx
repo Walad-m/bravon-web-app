@@ -244,8 +244,8 @@ export default function HomePage() {
       <section
         id="front-feed-spotlight"
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 80px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
@@ -254,15 +254,13 @@ export default function HomePage() {
             backgroundColor: "#FFFFFF",
             borderRadius: "28px",
             border: "1px solid rgba(0, 0, 0, 0.06)",
-            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.05)",
-            padding: "48px 24px",
-            textAlign: "center",
+            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.06)",
             overflow: "hidden",
             position: "relative",
           }}
         >
           {/* Section Header */}
-          <div style={{ maxWidth: "780px", margin: "0 auto 36px" }}>
+          <div style={{ maxWidth: "780px", margin: "0 auto", padding: "48px 24px 28px", textAlign: "center" }}>
             <span
               className="eyebrow"
               style={{
@@ -305,17 +303,13 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Centered Clean Studio Image */}
+          {/* Centered Clean Studio Image — Clean, Full-Width Framing */}
           <div
             style={{
               position: "relative",
-              maxWidth: "960px",
-              margin: "0 auto",
-              aspectRatio: "16/10",
-              borderRadius: "20px",
-              overflow: "hidden",
-              backgroundColor: "#FAFAFA",
-              border: "1px solid rgba(0, 0, 0, 0.04)",
+              width: "100%",
+              aspectRatio: "16/9",
+              maxHeight: "560px",
             }}
           >
             <Image
@@ -324,48 +318,31 @@ export default function HomePage() {
               fill
               style={{ objectFit: "contain", objectPosition: "center" }}
               priority
-              sizes="(max-width: 1024px) 100vw, 960px"
+              sizes="(max-width: 1340px) 100vw, 1340px"
             />
           </div>
 
-          {/* Benefit Badges Strip */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "16px",
-              maxWidth: "960px",
-              margin: "36px auto 0",
-              textAlign: "left",
-            }}
-          >
-            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-                <CheckCircle2 size={15} color="var(--bravon-purple)" />
-              </div>
+          {/* Benefit Badges Strip — Standardized Bottom Strip Matching Hero Highlights */}
+          <div className="hero-highlights-strip" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <CheckCircle2 size={16} color="var(--bravon-purple)" style={{ flexShrink: 0 }} />
               <div>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>4×6&quot; Shipping Standards</h4>
-                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Seamless support for USPS, UPS, FedEx, DHL, Shopify, and Amazon FBA labels.</p>
+                <span style={{ fontSize: "0.86rem", fontWeight: 700, color: "#1D1D1F", display: "block" }}>4×6&quot; Shipping Standards</span>
+                <span style={{ fontSize: "0.78rem", color: "#64748B" }}>USPS, UPS, FedEx, DHL & Shopify</span>
               </div>
             </div>
-
-            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-                <CheckCircle2 size={15} color="var(--bravon-purple)" />
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <CheckCircle2 size={16} color="var(--bravon-purple)" style={{ flexShrink: 0 }} />
               <div>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>160 mm/s Turbo Engine</h4>
-                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Print up to 72 labels every single minute with silent, heat-activated precision.</p>
+                <span style={{ fontSize: "0.86rem", fontWeight: 700, color: "#1D1D1F", display: "block" }}>160 mm/s Turbo Engine</span>
+                <span style={{ fontSize: "0.78rem", color: "#64748B" }}>72 labels every single minute</span>
               </div>
             </div>
-
-            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
-                <CheckCircle2 size={15} color="var(--bravon-purple)" />
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <CheckCircle2 size={16} color="var(--bravon-purple)" style={{ flexShrink: 0 }} />
               <div>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>203 DPI Barcode Clarity</h4>
-                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Guaranteed scan compliance across commercial handheld scanners and smartphones.</p>
+                <span style={{ fontSize: "0.86rem", fontWeight: 700, color: "#1D1D1F", display: "block" }}>203 DPI Barcode Clarity</span>
+                <span style={{ fontSize: "0.78rem", color: "#64748B" }}>Guaranteed scan compliance</span>
               </div>
             </div>
           </div>
@@ -376,49 +353,40 @@ export default function HomePage() {
       <section
         id="in-action"
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 80px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
-        <div className="action-grid-container">
-          {/* Action Photo */}
-          <div
-            style={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "16/9",
-              borderRadius: "20px",
-              overflow: "hidden",
-              boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
-              border: "1px solid rgba(0,0,0,0.06)",
-            }}
-          >
+        <div className="unified-showcase-card">
+          {/* Action Photo — Edge to edge with card, no nested margins */}
+          <div className="unified-card-media">
             <Image
               src={config.productImageAction || "/bravon-shipping-action-dark-stand.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Portable Thermal Label Printer in compact workspace`}
               fill
               style={{ objectFit: "cover" }}
+              sizes="(max-width: 960px) 100vw, 680px"
             />
           </div>
 
           {/* Action Copy */}
-          <div>
+          <div className="unified-card-body">
             <span className="eyebrow" style={{ marginBottom: "8px", display: "block" }}>
               {config.featureSectionEyebrow || "Palm-Sized Multifunctional Design"}
             </span>
             <h2 className="section-title-responsive" style={{ fontWeight: 700, letterSpacing: "-0.025em", marginBottom: "14px", color: "#1D1D1F" }}>
               {config.featureSectionHeadline || "Compact portability meets high-speed efficiency."}
             </h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.98rem", lineHeight: 1.6, marginBottom: "20px" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.98rem", lineHeight: 1.6, marginBottom: "16px" }}>
               {config.featureSectionBody1 || `With a paperless storage design, the ${config.productName || "Bravon POS-9260-L"} boasts a sleek, space-saving body that fits easily in a hand or bag—making it ideal for mobile workers, small businesses, and field logistics.`}
             </p>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "24px" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "22px" }}>
               {config.featureSectionBody2 || "It supports a paper width range of 30–110mm (up to 104mm max printable size), accommodating various thermal receipt, slip, and label papers, including 4x6\" shipping labels, self-adhesive stickers, and barcodes."}
             </p>
 
             {/* Quick Benefits List */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "28px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "26px" }}>
               {[
                 "Easy-open lid simplifies loading; printer automatically retracts the first sheet when closed",
                 "Internal precision print head, paper regulator, and rubber roller ensure stable, clear prints",
@@ -428,16 +396,18 @@ export default function HomePage() {
                   <div style={{ width: "18px", height: "18px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "2px", flexShrink: 0 }}>
                     <CheckCircle2 size={12} color="var(--bravon-purple)" />
                   </div>
-                  <span style={{ fontSize: "0.92rem", color: "#1D1D1F", fontWeight: 500 }}>
+                  <span style={{ fontSize: "0.9rem", color: "#1D1D1F", fontWeight: 500 }}>
                     {item}
                   </span>
                 </div>
               ))}
             </div>
 
-            <Link href="/product" className="btn-apple-primary hero-btn-mobile">
-              Order {config.productName || "Bravon POS-9260-L"} ({config.currencySymbol || "$"}{config.price})
-            </Link>
+            <div>
+              <Link href="/product" className="btn-apple-primary hero-btn-mobile">
+                Order {config.productName || "Bravon POS-9260-L"} ({config.currencySymbol || "$"}{config.price})
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -446,139 +416,118 @@ export default function HomePage() {
       <section
         id="custom-stickers"
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 90px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
-        <div
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: "28px",
-            border: "1px solid rgba(0, 0, 0, 0.06)",
-            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.05)",
-            padding: "48px 32px",
-            overflow: "hidden",
-          }}
-        >
-          <div className="action-grid-container" style={{ alignItems: "center" }}>
-            {/* Sticker Image Showcase */}
-            <div
+        <div className="unified-showcase-card">
+          {/* Sticker Image Showcase — Edge to edge with card, pure white clean backdrop */}
+          <div className="unified-card-media" style={{ backgroundColor: "#FFFFFF" }}>
+            <Image
+              src={config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg"}
+              alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels`}
+              fill
+              style={{ objectFit: "contain", objectPosition: "center", padding: "16px" }}
+              sizes="(max-width: 960px) 100vw, 680px"
+            />
+          </div>
+
+          {/* Sticker Copy & Features */}
+          <div className="unified-card-body">
+            <span
+              className="eyebrow"
               style={{
-                position: "relative",
-                width: "100%",
-                aspectRatio: "16/11",
-                borderRadius: "20px",
-                overflow: "hidden",
-                boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(0,0,0,0.06)",
+                marginBottom: "10px",
+                display: "inline-block",
+                padding: "4px 14px",
+                borderRadius: "9999px",
+                backgroundColor: "rgba(124, 58, 237, 0.08)",
+                color: "var(--bravon-purple)",
+                fontWeight: 700,
+                fontSize: "0.78rem",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
               }}
             >
-              <Image
-                src={config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg"}
-                alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels`}
-                fill
-                style={{ objectFit: "cover" }}
-                sizes="(max-width: 1024px) 100vw, 640px"
-              />
+              Custom Stickers & Branding
+            </span>
+            <h2
+              className="section-title-responsive"
+              style={{
+                fontWeight: 800,
+                letterSpacing: "-0.025em",
+                marginBottom: "14px",
+                color: "#0F172A",
+                fontSize: "2.1rem",
+                lineHeight: 1.2,
+              }}
+            >
+              Not just for shipping. Print custom stickers, seals & product labels.
+            </h2>
+            <p style={{ color: "#64748B", fontSize: "0.98rem", lineHeight: 1.6, marginBottom: "20px" }}>
+              Elevate your small business unboxing experience. From circular &ldquo;Thank You&rdquo; stickers and candle jar labels to bakery packaging seals and retail price tags, print exact quantities on demand with zero ink, zero toner, and zero waste.
+            </p>
+
+            {/* 4 Feature Points */}
+            <div
+              className="sticker-feature-grid"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", marginBottom: "24px" }}
+            >
+              <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                  </div>
+                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Round & Circle Seals</span>
+                </div>
+                <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                  Ideal for 1.5&quot;, 2&quot;, and 3&quot; circular packaging seals, envelopes, and tissue paper.
+                </p>
+              </div>
+
+              <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                  </div>
+                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Product Packaging</span>
+                </div>
+                <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                  Water and oil resistant stickers for candle jars, cosmetics, and food packaging.
+                </p>
+              </div>
+
+              <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                  </div>
+                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>30mm–110mm Width</span>
+                </div>
+                <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                  Adjustable side guides fit any roll width from mini 1&quot; tags to wide 4&quot; labels.
+                </p>
+              </div>
+
+              <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                  <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                  </div>
+                  <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Print On Demand</span>
+                </div>
+                <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                  Zero minimum order quantities. Print 5 or 500 stickers with zero ink cartridge costs.
+                </p>
+              </div>
             </div>
 
-            {/* Sticker Copy & Features */}
+            {/* Action Buttons */}
             <div>
-              <span
-                className="eyebrow"
-                style={{
-                  marginBottom: "10px",
-                  display: "inline-block",
-                  padding: "4px 14px",
-                  borderRadius: "9999px",
-                  backgroundColor: "rgba(124, 58, 237, 0.08)",
-                  color: "var(--bravon-purple)",
-                  fontWeight: 700,
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Custom Stickers & Branding
-              </span>
-              <h2
-                className="section-title-responsive"
-                style={{
-                  fontWeight: 800,
-                  letterSpacing: "-0.025em",
-                  marginBottom: "14px",
-                  color: "#0F172A",
-                  fontSize: "2.1rem",
-                  lineHeight: 1.2,
-                }}
-              >
-                Not just for shipping. Print custom stickers, seals & product labels.
-              </h2>
-              <p style={{ color: "#64748B", fontSize: "0.98rem", lineHeight: 1.6, marginBottom: "20px" }}>
-                Elevate your small business unboxing experience. From circular &ldquo;Thank You&rdquo; stickers and candle jar labels to bakery packaging seals and retail price tags, print exact quantities on demand with zero ink, zero toner, and zero waste.
-              </p>
-
-              {/* 4 Feature Points */}
-              <div
-                className="sticker-feature-grid"
-                style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "28px" }}
-              >
-                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
-                    </div>
-                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Round & Circle Seals</span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
-                    Ideal for 1.5&quot;, 2&quot;, and 3&quot; circular packaging seals, envelopes, and tissue paper.
-                  </p>
-                </div>
-
-                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
-                    </div>
-                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Product Packaging</span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
-                    Water and oil resistant stickers for candle jars, cosmetics, and food packaging.
-                  </p>
-                </div>
-
-                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
-                    </div>
-                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>30mm–110mm Width</span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
-                    Adjustable side guides fit any roll width from mini 1&quot; tags to wide 4&quot; labels.
-                  </p>
-                </div>
-
-                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
-                    </div>
-                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Print On Demand</span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
-                    Zero minimum order quantities. Print 5 or 500 stickers with zero ink cartridge costs.
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
-                <Link href="/product" className="btn-apple-primary hero-btn-mobile">
-                  Order {config.productName || "Bravon POS-9260-L"} ({config.currencySymbol || "$"}{config.price})
-                </Link>
-              </div>
+              <Link href="/product" className="btn-apple-primary hero-btn-mobile">
+                Order {config.productName || "Bravon POS-9260-L"} ({config.currencySymbol || "$"}{config.price})
+              </Link>
             </div>
           </div>
         </div>
@@ -591,8 +540,8 @@ export default function HomePage() {
       <section
         id="specs"
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 90px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
@@ -613,9 +562,9 @@ export default function HomePage() {
           style={{
             backgroundColor: "#FFFFFF",
             borderRadius: "28px",
-            border: "1px solid rgba(0, 0, 0, 0.08)",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
             padding: "36px 32px 32px",
-            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.04)",
+            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.06)",
             marginBottom: "40px",
             position: "relative",
             overflow: "hidden",
@@ -998,13 +947,13 @@ export default function HomePage() {
       {/* 5. READY OUT OF THE BOX — WHAT'S IN THE BOX */}
       <section
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 80px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
-        <div className="in-the-box-container">
-          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+        <div className="in-the-box-unified">
+          <div style={{ textAlign: "center", padding: "40px 24px 24px" }}>
             <span className="eyebrow" style={{ marginBottom: "8px", display: "block" }}>
               Everything Included
             </span>
@@ -1016,17 +965,13 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Knolling Product Photograph */}
+          {/* Knolling Product Photograph — Clean, Edge-to-Edge with Card Shell */}
           <div
             style={{
               position: "relative",
               width: "100%",
               aspectRatio: "16/9",
-              borderRadius: "20px",
-              overflow: "hidden",
-              marginBottom: "28px",
-              boxShadow: "0 15px 40px rgba(0,0,0,0.06)",
-              border: "1px solid rgba(0,0,0,0.06)",
+              maxHeight: "560px",
             }}
           >
             <Image
@@ -1034,11 +979,12 @@ export default function HomePage() {
               alt={`${config.productName || "Bravon POS-9260-L"} Thermal Printer What's In The Box`}
               fill
               style={{ objectFit: "cover" }}
+              sizes="(max-width: 1340px) 100vw, 1340px"
             />
           </div>
 
-          {/* In-the-box items grid */}
-          <div className="box-items-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+          {/* In-the-box items grid — Bottom Highlights Strip Style */}
+          <div className="box-items-grid">
             {[
               { title: config.productName ? config.productName.replace(" Thermal Printer", "") : "Bravon POS-9260-L", desc: "Commercial thermal hardware" },
               { title: "Multi-Format Stand", desc: "For roll & fanfold labels" },
@@ -1051,9 +997,10 @@ export default function HomePage() {
                 style={{
                   padding: "14px 12px",
                   borderRadius: "14px",
-                  backgroundColor: "var(--bg-apple)",
-                  border: "1px solid rgba(0,0,0,0.04)",
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid rgba(0,0,0,0.05)",
                   textAlign: "center",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.02)",
                 }}
               >
                 <p style={{ fontWeight: 600, fontSize: "0.9rem", color: "#1D1D1F", marginBottom: "2px" }}>
@@ -1072,8 +1019,8 @@ export default function HomePage() {
       <section
         id="software"
         style={{
-          maxWidth: "1280px",
-          margin: "0 auto 90px",
+          maxWidth: "1340px",
+          margin: "0 auto 60px",
           padding: "0 16px",
         }}
       >
@@ -1475,15 +1422,46 @@ export default function HomePage() {
           border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .action-grid-container {
+        .unified-showcase-card {
           display: grid;
-          grid-template-columns: 1.1fr 1fr;
-          gap: 48px;
-          align-items: center;
-          background-color: var(--bg-apple);
-          border-radius: 36px;
-          padding: 48px;
-          border: 1px solid rgba(0, 0, 0, 0.05);
+          grid-template-columns: 1.05fr 1fr;
+          align-items: stretch;
+          background-color: #FFFFFF;
+          border-radius: 28px;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        }
+
+        .unified-card-media {
+          position: relative;
+          width: 100%;
+          min-height: 440px;
+          overflow: hidden;
+        }
+
+        .unified-card-body {
+          padding: 44px 40px;
+          display: flex;
+          flex-direction: column;
+          justifyContent: center;
+        }
+
+        .in-the-box-unified {
+          background-color: #FFFFFF;
+          border-radius: 28px;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        }
+
+        .box-items-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 12px;
+          padding: 20px 28px;
+          background: var(--bg-apple);
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .specs-metric-grid {
@@ -1521,26 +1499,17 @@ export default function HomePage() {
           line-height: 1.5;
         }
 
-        .in-the-box-container {
-          background-color: #FFFFFF;
-          border-radius: 36px;
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          padding: 48px 36px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.04);
-        }
-
-        .box-items-grid {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 14px;
-        }
-
         @media (max-width: 960px) {
-          .action-grid-container {
+          .unified-showcase-card {
             grid-template-columns: 1fr !important;
-            padding: 32px 20px !important;
-            gap: 28px !important;
-            border-radius: 24px !important;
+            border-radius: 28px !important;
+          }
+          .unified-card-media {
+            min-height: 0 !important;
+            aspect-ratio: 16/9 !important;
+          }
+          .unified-card-body {
+            padding: 24px 20px 28px !important;
           }
           .hero-highlights-strip {
             grid-template-columns: 1fr 1fr !important;
@@ -1567,6 +1536,7 @@ export default function HomePage() {
           }
           .box-items-grid {
             grid-template-columns: repeat(3, 1fr) !important;
+            padding: 16px !important;
           }
         }
 
@@ -1579,21 +1549,18 @@ export default function HomePage() {
             text-align: center !important;
           }
           .hero-highlights-strip {
-            grid-template-columns: 1fr 1fr !important;
-            padding: 14px !important;
+            grid-template-columns: 1fr !important;
+            padding: 14px 16px !important;
             gap: 10px !important;
           }
           .blueprint-subgrid {
             grid-template-columns: 1fr !important;
             gap: 14px !important;
           }
-          .in-the-box-container {
-            padding: 24px 16px !important;
-            border-radius: 20px !important;
-          }
           .box-items-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 10px !important;
+            padding: 14px !important;
           }
           .sticker-feature-grid {
             grid-template-columns: 1fr !important;
