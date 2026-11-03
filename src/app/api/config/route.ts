@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { readServerConfig, writeServerConfig } from "@/lib/serverConfig";
 import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
@@ -34,6 +35,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const updated = await writeServerConfig(body);
+    try {
+      revalidatePath("/", "layout");
+    } catch {}
     return NextResponse.json({ success: true, config: updated });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Failed to update configuration";

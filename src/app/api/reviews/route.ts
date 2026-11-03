@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { Review, readReviews, writeReviews, computeReviewsStats } from "@/lib/reviews";
 import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
@@ -69,6 +70,10 @@ export async function POST(req: NextRequest) {
 
     reviews.unshift(newReview);
     await writeReviews(reviews);
+    try {
+      revalidatePath("/product");
+      revalidatePath("/");
+    } catch {}
 
     const stats = computeReviewsStats(reviews);
 
