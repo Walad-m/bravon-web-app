@@ -10,12 +10,36 @@ export const metadata: Metadata = {
   title: "Bravon Printer — Universal Thermal Label Printer",
   description: "The last thermal label printer you'll ever need. Works with Mac, Windows, iOS & Android. No ink, no toner.",
   keywords: "thermal label printer, shipping labels, Bravon printer, label printer, barcode printer",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "Bravon Printer — Universal Thermal Label Printer",
     description: "No ink. No toner. Just perfect labels every time. Works with every platform.",
     url: "/",
     siteName: "Bravon",
     type: "website",
+    images: [
+      {
+        url: "/bravon-hero-studio-dark.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Bravon Universal Thermal Label Printer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Bravon Printer — Universal Thermal Label Printer",
+    description: "No ink. No toner. Just perfect labels every time. Works with every platform.",
+    images: ["/bravon-hero-studio-dark.jpg"],
   },
 };
 
