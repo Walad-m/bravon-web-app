@@ -395,7 +395,7 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={config.productImageAction || "/bravon-shipping-action-v2.jpg"}
+              src={config.productImageAction || "/bravon-shipping-action-dark-stand.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Portable Thermal Label Printer in compact workspace`}
               fill
               style={{ objectFit: "cover" }}
