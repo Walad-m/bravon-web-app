@@ -24,13 +24,6 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // If on production bravoncity.com domain and accessing /admin, redirect to admin.bravoncity.com
-  if ((host === "bravoncity.com" || host === "www.bravoncity.com") && (url.pathname === "/admin" || url.pathname.startsWith("/admin/"))) {
-    const adminPath = url.pathname === "/admin" ? "/" : url.pathname.replace(/^\/admin/, "");
-    const adminUrl = new URL(adminPath, "https://admin.bravoncity.com");
-    return NextResponse.redirect(adminUrl);
-  }
-
   // 2. Design Subdomain Routing (e.g. design.bravoncity.com or design.localhost:3000)
   if (host.startsWith("design.")) {
     if (url.pathname === "/design") {
