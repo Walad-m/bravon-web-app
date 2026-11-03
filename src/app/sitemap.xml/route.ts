@@ -8,7 +8,6 @@ export async function GET() {
     { loc: "/", priority: "1.0", changefreq: "weekly" },
     { loc: "/product", priority: "0.9", changefreq: "weekly" },
     { loc: "/apps", priority: "0.8", changefreq: "monthly" },
-    { loc: "/design", priority: "0.8", changefreq: "monthly" },
     { loc: "/track", priority: "0.7", changefreq: "never" },
     { loc: "/returns", priority: "0.7", changefreq: "monthly" },
     { loc: "/faq", priority: "0.6", changefreq: "monthly" },

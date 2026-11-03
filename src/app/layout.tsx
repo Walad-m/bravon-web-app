@@ -6,13 +6,14 @@ import { ConfigProvider } from "@/context/ConfigContext";
 import { readServerConfig } from "@/lib/serverConfig";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://bravoncity.com"),
   title: "Bravon Printer — Universal Thermal Label Printer",
   description: "The last thermal label printer you'll ever need. Works with Mac, Windows, iOS & Android. No ink, no toner.",
   keywords: "thermal label printer, shipping labels, Bravon printer, label printer, barcode printer",
   openGraph: {
     title: "Bravon Printer — Universal Thermal Label Printer",
     description: "No ink. No toner. Just perfect labels every time. Works with every platform.",
-    url: "https://bravoncity.com",
+    url: "/",
     siteName: "Bravon",
     type: "website",
   },

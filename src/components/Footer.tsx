@@ -238,16 +238,7 @@ export default function Footer() {
           className="footer-bottom-bar"
         >
           <p>
-            © {new Date().getFullYear()} Bravon (
-            <a
-              href="https://bravoncity.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "var(--bravon-purple)", textDecoration: "none", fontWeight: 500 }}
-            >
-              bravoncity.com
-            </a>
-            ). All rights reserved.
+            © {new Date().getFullYear()} Bravon. All rights reserved.
           </p>
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
             <Link href="/privacy" style={{ color: "var(--text-tertiary)", textDecoration: "none" }}>Privacy</Link>
