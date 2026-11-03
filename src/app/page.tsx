@@ -240,6 +240,138 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 2.5 DIRECT FRONT-FEED STUDIO SHOWCASE (Requested by client) */}
+      <section
+        id="front-feed-spotlight"
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto 80px",
+          padding: "0 16px",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: "28px",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.05)",
+            padding: "48px 24px",
+            textAlign: "center",
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
+          {/* Section Header */}
+          <div style={{ maxWidth: "780px", margin: "0 auto 36px" }}>
+            <span
+              className="eyebrow"
+              style={{
+                marginBottom: "10px",
+                display: "inline-block",
+                padding: "4px 14px",
+                borderRadius: "9999px",
+                backgroundColor: "rgba(124, 58, 237, 0.08)",
+                color: "var(--bravon-purple)",
+                fontWeight: 700,
+                fontSize: "0.78rem",
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+              }}
+            >
+              Direct Thermal Output
+            </span>
+            <h2
+              className="section-title-responsive"
+              style={{
+                fontSize: "2.35rem",
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+                lineHeight: 1.15,
+                color: "#0F172A",
+                margin: "0 0 14px",
+              }}
+            >
+              Instant high-resolution printing. Right out the front.
+            </h2>
+            <p
+              style={{
+                fontSize: "1.02rem",
+                color: "#64748B",
+                lineHeight: 1.6,
+                margin: 0,
+              }}
+            >
+              Engineered with an auto-aligning feed engine. Standard 4×6&quot; shipping labels, high-density barcodes, and packaging slips glide smoothly forward at 160mm per second with zero ink and zero ribbon costs.
+            </p>
+          </div>
+
+          {/* Centered Clean Studio Image */}
+          <div
+            style={{
+              position: "relative",
+              maxWidth: "960px",
+              margin: "0 auto",
+              aspectRatio: "16/10",
+              borderRadius: "20px",
+              overflow: "hidden",
+              backgroundColor: "#FAFAFA",
+              border: "1px solid rgba(0, 0, 0, 0.04)",
+            }}
+          >
+            <Image
+              src={config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg"}
+              alt={`${config.productName || "Bravon POS-9260-L"} Commercial Thermal Label Printer with 4x6 shipping label`}
+              fill
+              style={{ objectFit: "contain", objectPosition: "center" }}
+              priority
+              sizes="(max-width: 1024px) 100vw, 960px"
+            />
+          </div>
+
+          {/* Benefit Badges Strip */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gap: "16px",
+              maxWidth: "960px",
+              margin: "36px auto 0",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
+                <CheckCircle2 size={15} color="var(--bravon-purple)" />
+              </div>
+              <div>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>4×6&quot; Shipping Standards</h4>
+                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Seamless support for USPS, UPS, FedEx, DHL, Shopify, and Amazon FBA labels.</p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
+                <CheckCircle2 size={15} color="var(--bravon-purple)" />
+              </div>
+              <div>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>160 mm/s Turbo Engine</h4>
+                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Print up to 72 labels every single minute with silent, heat-activated precision.</p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", padding: "16px 20px", borderRadius: "14px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+              <div style={{ width: "26px", height: "26px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
+                <CheckCircle2 size={15} color="var(--bravon-purple)" />
+              </div>
+              <div>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: 700, margin: "0 0 3px", color: "#0F172A" }}>203 DPI Barcode Clarity</h4>
+                <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0, lineHeight: 1.45 }}>Guaranteed scan compliance across commercial handheld scanners and smartphones.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 3. PRINTER IN ACTION — PALM-SIZED COMMERCIAL PORTABILITY */}
       <section
         id="in-action"

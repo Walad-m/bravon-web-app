@@ -60,6 +60,7 @@ export interface SiteConfig {
   productImageDark: string;
   productImageInBox: string;
   productImageAction: string;
+  frontFeedImageWhite: string;
   storeLogoUrl: string;
   storeFaviconUrl: string;
   ogImageUrl: string;
@@ -152,6 +153,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   productImageDark: "/exact-printer-dark.png",
   productImageInBox: "/bravon-in-the-box-v3.jpg",
   productImageAction: "/bravon-shipping-action-v2.jpg",
+  frontFeedImageWhite: "/bravon-hero-studio-white.jpg",
   storeLogoUrl: "/bravon-logo.png",
   storeFaviconUrl: "/bravon-app-icon.png",
   ogImageUrl: "/bravon-desktop-designer.png",
