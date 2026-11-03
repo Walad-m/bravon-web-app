@@ -100,32 +100,39 @@ alter table public.admin_auth enable row level security;
 
 -- Policies for public customer read access where applicable:
 -- Public can read approved reviews
+drop policy if exists "Allow public to read approved reviews" on public.reviews;
 create policy "Allow public to read approved reviews"
   on public.reviews for select
   using (status = 'approved');
 
 -- Public can read site config
+drop policy if exists "Allow public to read site config" on public.site_config;
 create policy "Allow public to read site config"
   on public.site_config for select
   using (true);
 
 -- Allow backend service role (SUPABASE_SERVICE_ROLE_KEY) full access to all tables
+drop policy if exists "Allow service role full access to orders" on public.orders;
 create policy "Allow service role full access to orders"
   on public.orders for all
   using (auth.role() = 'service_role');
 
+drop policy if exists "Allow service role full access to claims" on public.claims;
 create policy "Allow service role full access to claims"
   on public.claims for all
   using (auth.role() = 'service_role');
 
+drop policy if exists "Allow service role full access to reviews" on public.reviews;
 create policy "Allow service role full access to reviews"
   on public.reviews for all
   using (auth.role() = 'service_role');
 
+drop policy if exists "Allow service role full access to site_config" on public.site_config;
 create policy "Allow service role full access to site_config"
   on public.site_config for all
   using (auth.role() = 'service_role');
 
+drop policy if exists "Allow service role full access to admin_auth" on public.admin_auth;
 create policy "Allow service role full access to admin_auth"
   on public.admin_auth for all
   using (auth.role() = 'service_role');
