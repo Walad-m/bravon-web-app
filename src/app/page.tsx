@@ -19,6 +19,7 @@ import { useSiteConfig } from "@/context/ConfigContext";
 import IPhoneMockup from "@/components/IPhoneMockup";
 import DesktopAppMockup from "@/components/DesktopAppMockup";
 import ProductInformationSection from "@/components/ProductInformationSection";
+import ReviewsSection from "@/components/ReviewsSection";
 
 
 export default function HomePage() {
@@ -1256,140 +1257,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6B. VERIFIED CUSTOMER REVIEWS SHOWCASE */}
-      <section
-        style={{
-          padding: "80px 20px",
-          backgroundColor: "#FAFAFC",
-          borderTop: "1px solid rgba(0,0,0,0.06)",
-        }}
-      >
-        <div style={{ maxWidth: "1120px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <span className="eyebrow" style={{ display: "inline-block", marginBottom: "8px" }}>
-              Verified Social Proof
-            </span>
-            <h2 className="section-title-responsive" style={{ fontWeight: 800, letterSpacing: "-0.03em", color: "#0F172A", marginBottom: "12px" }}>
-              Trusted by 10,000+ High-Volume Shippers
-            </h2>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ display: "flex", gap: "3px" }}>
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} size={18} fill="#F59E0B" color="#F59E0B" />
-                ))}
-              </div>
-              <span style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0F172A" }}>4.9 out of 5</span>
-              <span style={{ fontSize: "0.9rem", color: "#64748B" }}>· Over 38 verified merchant reviews</span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-              gap: "24px",
-              marginBottom: "36px",
-            }}
-          >
-            {[
-              {
-                author: "Marcus Sterling",
-                role: "Founder, Apex Logistics Supply",
-                title: "Replaced three bulky legacy printers with this beast",
-                quote: "We ship roughly 450 packages a day across Shopify and ShipStation. The POS-9260-L is whisper-quiet, lightning-fast at 160mm/s, and has zero paper jams. The rear external stand holds our 500-label fanfold stacks flawlessly.",
-                finish: "Dark Slate",
-              },
-              {
-                author: "Elena Rostova",
-                role: "Operations Dir, Lumina Home Goods",
-                title: "Clean desktop footprint and instant Mac compatibility",
-                quote: "The Bravon plugged in via Type-C and printed our 4x6 shipping labels on the first click. The industrial dark slate matte finish looks like an Apple accessory on my packing table.",
-                finish: "Dark Slate",
-              },
-              {
-                author: "David Chen",
-                role: "Owner, Chen & Co. Artisans",
-                title: "The stand included is a game changer for continuous rolls",
-                quote: "Most printers charge $30 extra for an external roll holder. Bravon including the dedicated multi-format stand that supports both tight rolls and fanfold paper in the ecosystem is incredible.",
-                finish: "Arctic White",
-              },
-            ].map((t) => (
-              <div
-                key={t.author}
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "20px",
-                  padding: "28px",
-                  boxShadow: "0 4px 20px rgba(15, 23, 42, 0.04)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                    <div style={{ display: "flex", gap: "2px" }}>
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <Star key={s} size={15} fill="#F59E0B" color="#F59E0B" />
-                      ))}
-                    </div>
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        fontSize: "0.72rem",
-                        fontWeight: 700,
-                        color: "#16A34A",
-                      }}
-                    >
-                      <CheckCircle2 size={12} fill="#16A34A" color="#FFFFFF" />
-                      <span>Verified Buyer</span>
-                    </span>
-                  </div>
-                  <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "#0F172A", marginBottom: "8px", lineHeight: 1.35 }}>
-                    &ldquo;{t.title}&rdquo;
-                  </h4>
-                  <p style={{ fontSize: "0.88rem", color: "#475569", lineHeight: 1.6, marginBottom: "16px" }}>
-                    {t.quote}
-                  </p>
-                </div>
-
-                <div style={{ borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <p style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A", margin: 0 }}>{t.author}</p>
-                    <p style={{ fontSize: "0.76rem", color: "#64748B", margin: 0 }}>{t.role}</p>
-                  </div>
-                  <span
-                    style={{
-                      fontSize: "0.72rem",
-                      fontWeight: 600,
-                      color: "#475569",
-                      backgroundColor: "#F1F5F9",
-                      padding: "2px 8px",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {t.finish}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ textAlign: "center" }}>
-            <Link
-              href="/product#reviews"
-              className="btn-apple-secondary"
-              style={{ padding: "12px 28px", display: "inline-flex", alignItems: "center", gap: "8px" }}
-            >
-              <span>Read All Customer Reviews</span>
-              <ArrowRight size={15} />
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* 6B. VERIFIED CUSTOMER REVIEWS SHOWCASE (DYNAMIC LIVE DB) */}
+      <ReviewsSection productName={config.productName} />
 
       {/* 7. FINAL CALL TO ACTION */}
       <section

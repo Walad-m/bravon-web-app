@@ -331,27 +331,21 @@ export default function ProductPage() {
                 cursor: "pointer",
               }}
             >
-              <div style={{ display: "flex", gap: "2px" }}>
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} size={15} fill="#F59E0B" color="#F59E0B" />
-                ))}
-              </div>
-              <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>4.9</span>
-              <span style={{ fontSize: "0.82rem", color: "#64748B" }}>
-                (Verified Merchant Reviews)
+              <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--bravon-purple)" }}>
+                Verified Customer Reviews
               </span>
               <span
                 style={{
                   fontSize: "0.72rem",
                   fontWeight: 700,
-                  color: "#7C3AED",
-                  backgroundColor: "rgba(124, 58, 237, 0.08)",
+                  color: "#16A34A",
+                  backgroundColor: "rgba(22, 163, 74, 0.08)",
                   padding: "2px 8px",
                   borderRadius: "999px",
                   marginLeft: "4px",
                 }}
               >
-                Top Rated
+                Genuine Feedback
               </span>
             </a>
 

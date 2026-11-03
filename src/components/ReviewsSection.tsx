@@ -15,10 +15,10 @@ export default function ReviewsSection({
 }: ReviewsSectionProps) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<ReviewsStats>({
-    averageRating: 4.9,
-    totalReviews: 6,
-    ratingCounts: { 5: 5, 4: 1, 3: 0, 2: 0, 1: 0 },
-    recommendRate: 100,
+    averageRating: 0,
+    totalReviews: 0,
+    ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+    recommendRate: 0,
   });
   const [loading, setLoading] = useState(true);
   const [selectedFilter, setSelectedFilter] = useState<number | "all">("all");
@@ -177,21 +177,83 @@ export default function ReviewsSection({
           </p>
         </div>
 
-        {/* Scorecard Overview Card */}
-        <div
-          style={{
-            backgroundColor: "#FFFFFF",
-            borderRadius: "20px",
-            padding: "36px 32px",
-            boxShadow: "0 4px 24px rgba(15, 23, 42, 0.05)",
-            border: "1px solid rgba(0, 0, 0, 0.06)",
-            marginBottom: "36px",
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "32px",
-            alignItems: "center",
-          }}
-        >
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "56px 0", color: "#94A3B8" }}>Loading verified reviews...</div>
+        ) : reviews.length === 0 ? (
+          <div
+            style={{
+              backgroundColor: "#FFFFFF",
+              borderRadius: "20px",
+              padding: "56px 24px",
+              textAlign: "center",
+              boxShadow: "0 4px 24px rgba(15, 23, 42, 0.04)",
+              border: "1px solid rgba(0, 0, 0, 0.06)",
+              maxWidth: "620px",
+              margin: "0 auto 36px",
+            }}
+          >
+            <div
+              style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(124, 58, 237, 0.08)",
+                color: "#7C3AED",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: "16px",
+              }}
+            >
+              <Star size={26} fill="#7C3AED" color="#7C3AED" />
+            </div>
+            <h3 style={{ fontSize: "1.35rem", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>
+              No Customer Reviews Yet
+            </h3>
+            <p style={{ color: "#64748B", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: "460px", margin: "0 auto 24px" }}>
+              Be the first verified customer to share your thoughts on the {productName}. Genuine feedback helps the entire community!
+            </p>
+            <button
+              onClick={() => setIsWriteModalOpen(true)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                backgroundColor: "#7C3AED",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: "999px",
+                padding: "12px 28px",
+                fontSize: "0.95rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                boxShadow: "0 4px 14px rgba(124, 58, 237, 0.25)",
+                transition: "transform 0.15s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-1px)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            >
+              <PenTool size={16} />
+              <span>Write the First Review</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Scorecard Overview Card */}
+            <div
+              style={{
+                backgroundColor: "#FFFFFF",
+                borderRadius: "20px",
+                padding: "36px 32px",
+                boxShadow: "0 4px 24px rgba(15, 23, 42, 0.05)",
+                border: "1px solid rgba(0, 0, 0, 0.06)",
+                marginBottom: "36px",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: "32px",
+                alignItems: "center",
+              }}
+            >
           {/* Left: Overall Score */}
           <div style={{ textAlign: "center", borderRight: "1px solid rgba(0,0,0,0.06)", paddingRight: "20px" }}>
             <div
@@ -664,6 +726,8 @@ export default function ReviewsSection({
               );
             })}
           </div>
+        )}
+          </>
         )}
       </div>
 
