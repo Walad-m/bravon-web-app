@@ -207,3 +207,15 @@
     size: auto;
   }
 }
+
+/* Hide Next.js dev indicator badge */
+next-route-announcer,
+[data-nextjs-dev-overlay],
+[data-nextjs-toast],
+#nextjs-dev-indicator,
+nextjs-portal {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
