@@ -422,13 +422,23 @@ export default function HomePage() {
         }}
       >
         <div className="unified-showcase-card">
-          {/* Sticker Image Showcase — Edge to edge with card, pure white clean backdrop */}
-          <div className="unified-card-media" style={{ backgroundColor: "#FFFFFF" }}>
+          {/* Sticker Image Showcase — Entire Scene Visible with Floor Stickers */}
+          <div
+            className="unified-card-media"
+            style={{
+              backgroundColor: "#FFFFFF",
+              minHeight: "440px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             <Image
-              src={config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg"}
-              alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels`}
+              src={config.stickerLifestyleImage || "/bravon-stickers-floor-v2.jpg"}
+              alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels with stickers on floor`}
               fill
-              style={{ objectFit: "cover", objectPosition: "center" }}
+              style={{ objectFit: "contain", objectPosition: "center", padding: "16px" }}
+              priority
               sizes="(max-width: 960px) 100vw, 680px"
             />
           </div>
@@ -1425,7 +1435,7 @@ export default function HomePage() {
         .unified-showcase-card {
           display: grid;
           grid-template-columns: 1.05fr 1fr;
-          align-items: stretch;
+          align-items: center;
           background-color: #FFFFFF;
           border-radius: 28px;
           border: 1px solid rgba(0, 0, 0, 0.06);
