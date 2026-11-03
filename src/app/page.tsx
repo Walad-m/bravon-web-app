@@ -442,6 +442,162 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 3.5 BEYOND SHIPPING: CUSTOM STICKERS & CREATIVE BRANDING */}
+      <section
+        id="custom-stickers"
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto 90px",
+          padding: "0 16px",
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: "#FFFFFF",
+            borderRadius: "28px",
+            border: "1px solid rgba(0, 0, 0, 0.06)",
+            boxShadow: "0 20px 60px -15px rgba(0, 0, 0, 0.05)",
+            padding: "48px 32px",
+            overflow: "hidden",
+          }}
+        >
+          <div className="action-grid-container" style={{ alignItems: "center" }}>
+            {/* Sticker Image Showcase */}
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                aspectRatio: "16/11",
+                borderRadius: "20px",
+                overflow: "hidden",
+                boxShadow: "0 15px 40px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(0,0,0,0.06)",
+              }}
+            >
+              <Image
+                src={config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg"}
+                alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels`}
+                fill
+                style={{ objectFit: "cover" }}
+                sizes="(max-width: 1024px) 100vw, 640px"
+              />
+            </div>
+
+            {/* Sticker Copy & Features */}
+            <div>
+              <span
+                className="eyebrow"
+                style={{
+                  marginBottom: "10px",
+                  display: "inline-block",
+                  padding: "4px 14px",
+                  borderRadius: "9999px",
+                  backgroundColor: "rgba(124, 58, 237, 0.08)",
+                  color: "var(--bravon-purple)",
+                  fontWeight: 700,
+                  fontSize: "0.78rem",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Custom Stickers & Branding
+              </span>
+              <h2
+                className="section-title-responsive"
+                style={{
+                  fontWeight: 800,
+                  letterSpacing: "-0.025em",
+                  marginBottom: "14px",
+                  color: "#0F172A",
+                  fontSize: "2.1rem",
+                  lineHeight: 1.2,
+                }}
+              >
+                Not just for shipping. Print custom stickers, seals & product labels.
+              </h2>
+              <p style={{ color: "#64748B", fontSize: "0.98rem", lineHeight: 1.6, marginBottom: "20px" }}>
+                Elevate your small business unboxing experience. From circular &ldquo;Thank You&rdquo; stickers and candle jar labels to bakery packaging seals and retail price tags, print exact quantities on demand with zero ink, zero toner, and zero waste.
+              </p>
+
+              {/* 4 Feature Points */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "28px" }}>
+                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                    </div>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Round & Circle Seals</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                    Ideal for 1.5&quot;, 2&quot;, and 3&quot; circular packaging seals, envelopes, and tissue paper.
+                  </p>
+                </div>
+
+                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                    </div>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Product Packaging</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                    Water and oil resistant stickers for candle jars, cosmetics, and food packaging.
+                  </p>
+                </div>
+
+                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                    </div>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>30mm–110mm Width</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                    Adjustable side guides fit any roll width from mini 1&quot; tags to wide 4&quot; labels.
+                  </p>
+                </div>
+
+                <div style={{ padding: "14px 16px", borderRadius: "12px", backgroundColor: "#F8FAFC", border: "1px solid #F1F5F9" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                    <div style={{ width: "20px", height: "20px", borderRadius: "50%", backgroundColor: "rgba(124, 58, 237, 0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <CheckCircle2 size={12} color="var(--bravon-purple)" />
+                    </div>
+                    <span style={{ fontSize: "0.88rem", fontWeight: 700, color: "#0F172A" }}>Print On Demand</span>
+                  </div>
+                  <p style={{ fontSize: "0.78rem", color: "#64748B", margin: 0, lineHeight: 1.4 }}>
+                    Zero minimum order quantities. Print 5 or 500 stickers with zero ink cartridge costs.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                <Link href="/product" className="btn-apple-primary hero-btn-mobile">
+                  Get Started ({config.currencySymbol || "$"}{config.price})
+                </Link>
+                <Link
+                  href="/design"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "12px 20px",
+                    borderRadius: "980px",
+                    fontSize: "0.9rem",
+                    fontWeight: 600,
+                    color: "var(--bravon-purple)",
+                    backgroundColor: "rgba(124, 58, 237, 0.08)",
+                    textDecoration: "none",
+                  }}
+                >
+                  Open Label & Sticker Studio <ArrowRight size={15} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 4. PRODUCT INFORMATION & DIMENSIONAL HARDWARE ANATOMY */}
       <ProductInformationSection />
 

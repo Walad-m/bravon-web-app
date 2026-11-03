@@ -60,6 +60,12 @@ export default function ProductPage() {
       src: "/bravon-shipping-action-dark-stand.jpg",
     },
     {
+      id: "stickers",
+      title: "Custom Stickers",
+      subtitle: "Brand & Circle Seals",
+      src: config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg",
+    },
+    {
       id: "unboxing",
       title: "In The Box",
       subtitle: "Complete Kit",
