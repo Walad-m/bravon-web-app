@@ -238,19 +238,6 @@ export default function ProductPage() {
               <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--bravon-purple)" }}>
                 Verified Customer Reviews
               </span>
-              <span
-                style={{
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  color: "#16A34A",
-                  backgroundColor: "rgba(22, 163, 74, 0.08)",
-                  padding: "2px 8px",
-                  borderRadius: "999px",
-                  marginLeft: "4px",
-                }}
-              >
-                Genuine Feedback
-              </span>
             </a>
 
             <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.55, marginBottom: "20px" }}>

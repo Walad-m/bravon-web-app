@@ -48,6 +48,7 @@ import {
 import BravonLogo from "@/components/BravonLogo";
 import { DEFAULT_SITE_CONFIG, SiteConfig } from "@/lib/siteConfig";
 import { Review, ReviewsStats } from "@/lib/reviews";
+import { formatReviewDate } from "@/components/ReviewsSection";
 import EnvSettingsTab from "@/components/admin/EnvSettingsTab";
 
 type AdminTab = "orders" | "claims" | "reviews" | "product" | "media" | "hero" | "store" | "commerce" | "env" | "security";
@@ -2387,7 +2388,7 @@ export default function AdminPage() {
                                   </span>
                                 </div>
                                 <div style={{ fontSize: "0.78rem", color: "#64748B" }}>
-                                  {rev.role || "Verified Buyer"} · {rev.date}
+                                  {rev.role || "Verified Buyer"} · {formatReviewDate(rev.date)}
                                 </div>
                               </div>
                             </div>

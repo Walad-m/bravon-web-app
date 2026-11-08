@@ -1,8 +1,34 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Star, CheckCircle2, ThumbsUp, PenTool, X, ShieldCheck, Sparkles, Filter } from "lucide-react";
+import { Star, CheckCircle2, ThumbsUp, PenTool, X, ShieldCheck, Sparkles, Filter, Calendar } from "lucide-react";
 import { Review, ReviewsStats } from "@/lib/reviews";
+
+export function formatReviewDate(dateStr?: string): string {
+  if (!dateStr) {
+    return new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  // Handle formats like "2026 11 03", "2026-11-03", or ISO timestamps
+  const normalized = dateStr.trim().replace(/\s+/g, "-");
+  const parts = normalized.split("-");
+  if (parts.length === 3 && parts[0].length === 4) {
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const d = new Date(year, month, day);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+  }
+
+  const parsed = new Date(normalized);
+  if (!isNaN(parsed.getTime())) {
+    return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  return dateStr;
+}
 
 interface ReviewsSectionProps {
   productName?: string;
@@ -699,7 +725,10 @@ export default function ReviewsSection({
                       color: "#94A3B8",
                     }}
                   >
-                    <span>{review.date}</span>
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", color: "#64748B", fontWeight: 500 }}>
+                      <Calendar size={13} style={{ opacity: 0.8 }} />
+                      {formatReviewDate(review.date)}
+                    </span>
                     <button
                       type="button"
                       onClick={() => handleHelpful(review.id)}
