@@ -363,7 +363,7 @@ export default function HomePage() {
           {/* Action Photo — Edge to edge with card, no nested margins */}
           <div className="unified-card-media">
             <Image
-              src={config.productImageAction || "/bravon-shipping-action-dark-stand.jpg"}
+              src={config.productImageAction || "/bravon-shipping-action-v3.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Portable Thermal Label Printer in compact workspace`}
               fill
               style={{ objectFit: "cover" }}

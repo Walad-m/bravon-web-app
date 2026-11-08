@@ -135,7 +135,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   videoHeadline: "See Bravon in Action",
   videoSubhead: "Watch high-speed 160 mm/s direct thermal printing, wireless BLE pairing, and instant label feeding in real-time.",
   videoUrl: "/bravon-printer-demo.mp4",
-  videoPosterUrl: "/bravon-shipping-action-dark-stand.jpg",
+  videoPosterUrl: "/bravon-shipping-action-v3.jpg",
 
   // Warranty & Returns
   warrantyDuration: "2-Year Comprehensive",
@@ -154,7 +154,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   productImageWhite: "/exact-printer-white.png",
   productImageDark: "/exact-printer-dark.png",
   productImageInBox: "/bravon-in-the-box-v3.jpg",
-  productImageAction: "/bravon-shipping-action-dark-stand.jpg",
+  productImageAction: "/bravon-shipping-action-v3.jpg",
   frontFeedImageWhite: "/bravon-hero-studio-white.jpg",
   frontFeedImageDark: "/bravon-hero-studio-dark.jpg",
   stickerLifestyleImage: "/bravon-stickers-floor-v2.jpg",
