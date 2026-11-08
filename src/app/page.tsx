@@ -435,7 +435,7 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={config.stickerLifestyleImage || "/bravon-stickers-floor-v2.jpg"}
+              src={config.stickerLifestyleImage || "/bravon-stickers-floor-v3.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Printing Custom Round Stickers and Small Business Packaging Labels with stickers on floor`}
               fill
               style={{ objectFit: "contain", objectPosition: "center", padding: "16px" }}
