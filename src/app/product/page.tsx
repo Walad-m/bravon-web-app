@@ -22,7 +22,6 @@ import ReviewsSection from "@/components/ReviewsSection";
 export default function ProductPage() {
   const { config } = useSiteConfig();
   const [selectedColor, setSelectedColor] = useState<"white" | "dark">(config.defaultColor || "dark");
-  const [activeGalleryIndex, setActiveGalleryIndex] = useState<number>(0);
   const [qty, setQty] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -33,39 +32,19 @@ export default function ProductPage() {
     }
   }, [config.defaultColor]);
 
-  // Gallery items strictly for the two printer finishes (Dark Slate & Arctic White)
-  const galleryItems: {
-    id: string;
-    color: "white" | "dark";
-    title: string;
-    subtitle: string;
-    src: string;
-  }[] = [
-    {
-      id: "dark",
-      color: "dark",
-      title: config.darkColorLabel || "Dark Slate",
-      subtitle: "Stealth Matte Finish",
-      src: config.frontFeedImageDark || "/bravon-hero-studio-dark.jpg",
-    },
-    {
-      id: "white",
-      color: "white",
-      title: config.whiteColorLabel || "Arctic White",
-      subtitle: "Clean Studio Finish",
-      src: config.frontFeedImageWhite || "/bravon-hero-studio-white-v2.jpg",
-    },
-  ];
+  // Current display image based on selected finish
+  const activeImage =
+    selectedColor === "white"
+      ? config.frontFeedImageWhite || "/bravon-hero-studio-white-v2.jpg"
+      : config.frontFeedImageDark || "/bravon-hero-studio-dark-v2.jpg";
 
-  // Keep active gallery index synchronized with selected finish
-  useEffect(() => {
-    const idx = galleryItems.findIndex((item) => item.color === selectedColor);
-    if (idx !== -1 && idx !== activeGalleryIndex) {
-      setActiveGalleryIndex(idx);
-    }
-  }, [selectedColor]);
+  const activeTitle =
+    selectedColor === "white"
+      ? config.whiteColorLabel || "Arctic White"
+      : config.darkColorLabel || "Dark Slate";
 
-  const currentGalleryItem = galleryItems[activeGalleryIndex] || galleryItems[0];
+  const activeSubtitle =
+    selectedColor === "white" ? "Clean Studio Finish" : "Stealth Matte Finish";
   const currentPrice = config.price || 100;
   const currentComparePrice = config.comparePrice || 149;
 
@@ -190,7 +169,7 @@ export default function ProductPage() {
                   zIndex: 2,
                 }}
               >
-                {currentGalleryItem.title} · {currentGalleryItem.subtitle}
+                {activeTitle} · {activeSubtitle}
               </div>
 
               {/* Main Preview Image */}
@@ -198,7 +177,7 @@ export default function ProductPage() {
                 style={{
                   position: "relative",
                   width: "100%",
-                  height: "340px",
+                  height: "360px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -206,9 +185,9 @@ export default function ProductPage() {
                 }}
               >
                 <Image
-                  key={`${currentGalleryItem.id}-${selectedColor}`}
-                  src={currentGalleryItem.src}
-                  alt={`${config.productName} - ${currentGalleryItem.title}`}
+                  key={selectedColor}
+                  src={activeImage}
+                  alt={`${config.productName} - ${activeTitle}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 600px"
                   style={{
@@ -217,91 +196,6 @@ export default function ProductPage() {
                   }}
                   priority
                 />
-              </div>
-
-              {/* Two-Printer Interactive Finish Selector Strip */}
-              <div
-                className="gallery-thumbnail-strip"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "10px",
-                  width: "100%",
-                  maxWidth: "100%",
-                  marginTop: "16px",
-                  paddingTop: "14px",
-                  borderTop: "1px solid rgba(0, 0, 0, 0.06)",
-                  boxSizing: "border-box",
-                }}
-              >
-                {galleryItems.map((item, index) => {
-                  const isActive = selectedColor === item.color || activeGalleryIndex === index;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveGalleryIndex(index);
-                        if (item.color) {
-                          setSelectedColor(item.color);
-                        }
-                      }}
-                      style={{
-                        padding: "10px 14px",
-                        borderRadius: "14px",
-                        border: isActive
-                          ? "2px solid var(--bravon-purple)"
-                          : "1px solid rgba(0, 0, 0, 0.08)",
-                        backgroundColor: isActive ? "var(--bravon-purple-subtle)" : "#FAFAFC",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                        transition: "all 0.2s ease",
-                        boxShadow: isActive ? "0 4px 12px rgba(124, 58, 237, 0.12)" : "none",
-                        textAlign: "left",
-                      }}
-                      aria-label={`Select ${item.title}`}
-                    >
-                      <span
-                        style={{
-                          width: "18px",
-                          height: "18px",
-                          borderRadius: "50%",
-                          backgroundColor: item.color === "dark" ? "#2B3245" : "#FFFFFF",
-                          border: item.color === "dark" ? "2px solid rgba(0,0,0,0.2)" : "2px solid #D1D5DB",
-                          display: "inline-block",
-                          flexShrink: 0,
-                        }}
-                      />
-                      <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                        <span
-                          style={{
-                            fontSize: "0.82rem",
-                            fontWeight: 700,
-                            color: isActive ? "var(--bravon-purple)" : "#0F172A",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {item.title}
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "0.68rem",
-                            color: "var(--text-secondary)",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {item.subtitle}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
               </div>
             </div>
           </div>
@@ -422,10 +316,7 @@ export default function ProductPage() {
                 {/* Dark Slate Option */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedColor("dark");
-                    setActiveGalleryIndex(0);
-                  }}
+                  onClick={() => setSelectedColor("dark")}
                   style={{
                     padding: "14px 16px",
                     borderRadius: "16px",
@@ -464,10 +355,7 @@ export default function ProductPage() {
                 {/* Arctic White Option */}
                 <button
                   type="button"
-                  onClick={() => {
-                    setSelectedColor("white");
-                    setActiveGalleryIndex(0);
-                  }}
+                  onClick={() => setSelectedColor("white")}
                   style={{
                     padding: "14px 16px",
                     borderRadius: "16px",
