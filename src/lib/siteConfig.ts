@@ -155,7 +155,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   productImageDark: "/exact-printer-dark.png",
   productImageInBox: "/bravon-in-the-box-v3.jpg",
   productImageAction: "/bravon-shipping-action-v3.jpg",
-  frontFeedImageWhite: "/bravon-hero-studio-white.jpg",
+  frontFeedImageWhite: "/bravon-hero-studio-white-v2.jpg",
   frontFeedImageDark: "/bravon-hero-studio-dark.jpg",
   stickerLifestyleImage: "/bravon-stickers-floor-v2.jpg",
   storeLogoUrl: "/bravon-logo.png",

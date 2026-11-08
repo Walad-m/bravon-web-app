@@ -314,7 +314,7 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg"}
+              src={config.frontFeedImageWhite || "/bravon-hero-studio-white-v2.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Commercial Thermal Label Printer in Arctic White with 4x6 shipping label`}
               fill
               style={{ objectFit: "contain", objectPosition: "center" }}
