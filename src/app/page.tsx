@@ -986,7 +986,7 @@ export default function HomePage() {
             }}
           >
             <Image
-              src={config.productImageInBox || "/bravon-in-the-box-v3.jpg"}
+              src={config.productImageInBox || "/bravon-in-the-box-v4.jpg"}
               alt={`${config.productName || "Bravon POS-9260-L"} Thermal Printer What's In The Box`}
               fill
               style={{ objectFit: "cover" }}
