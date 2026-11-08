@@ -159,6 +159,80 @@ export default function AdminPage() {
     }
   };
 
+  // Customer Contacts & Export State
+  const [copiedEmails, setCopiedEmails] = useState(false);
+
+  const handleCopyEmails = () => {
+    const emails = Array.from(
+      new Set(orders.map((o) => o.customerEmail).filter(Boolean))
+    );
+    if (emails.length === 0) {
+      alert("No customer emails recorded yet.");
+      return;
+    }
+    navigator.clipboard.writeText(emails.join(", "));
+    setCopiedEmails(true);
+    setTimeout(() => setCopiedEmails(false), 2500);
+  };
+
+  const handleExportCSV = () => {
+    if (orders.length === 0) {
+      alert("No orders available to export.");
+      return;
+    }
+
+    const headers = [
+      "Order ID",
+      "Customer Name",
+      "Customer Email",
+      "Phone",
+      "Street Address",
+      "City",
+      "State",
+      "Postal Code",
+      "Country",
+      "Amount Total (USD)",
+      "Finish Purchased",
+      "Order Date",
+      "Payment Status",
+      "Fulfillment Status",
+    ];
+
+    const rows = orders.map((o) => {
+      const finish = o.items?.[0]?.color || "";
+      const address = o.shipping?.address;
+      const escape = (val?: string | number) => `"${String(val || "").replace(/"/g, '""')}"`;
+
+      return [
+        escape(o.id),
+        escape(o.customerName || o.shipping?.name),
+        escape(o.customerEmail),
+        escape(o.shipping?.phone),
+        escape(address?.line1 ? `${address.line1} ${address.line2 || ""}`.trim() : ""),
+        escape(address?.city),
+        escape(address?.state),
+        escape(address?.postal_code),
+        escape(address?.country),
+        escape(o.amountTotal.toFixed(2)),
+        escape(finish),
+        escape(o.createdAt),
+        escape(o.paymentStatus),
+        escape(o.fulfillmentStatus),
+      ].join(",");
+    });
+
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `bravon-customer-contacts-${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Returns & Warranty Claims state
   const [claims, setClaims] = useState<any[]>([]);
   const [loadingClaims, setLoadingClaims] = useState(false);
@@ -1470,35 +1544,83 @@ export default function AdminPage() {
               </div>
 
               {/* Orders Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
                 <div>
                   <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0F172A", margin: 0 }}>
-                    Customer Orders ({orders.length})
+                    Customer Orders & Contacts ({orders.length})
                   </h2>
                   <p style={{ fontSize: "0.82rem", color: "#64748B", margin: "2px 0 0" }}>
-                    Live customer purchases captured via Stripe Checkout & Webhook
+                    Verified customer purchases & contact details for updates and announcements
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={loadOrders}
-                  disabled={loadingOrders}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "6px",
-                    padding: "7px 14px",
-                    borderRadius: "6px",
-                    border: "1px solid rgba(0,0,0,0.12)",
-                    backgroundColor: "#FFFFFF",
-                    fontSize: "0.78rem",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
-                >
-                  <RefreshCw size={13} className={loadingOrders ? "animate-spin" : ""} />
-                  {loadingOrders ? "Refreshing..." : "Refresh Orders"}
-                </button>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={handleCopyEmails}
+                    disabled={orders.length === 0}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "7px 14px",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      backgroundColor: copiedEmails ? "#ECFDF5" : "#FFFFFF",
+                      color: copiedEmails ? "#059669" : "#0F172A",
+                      fontSize: "0.78rem",
+                      fontWeight: 600,
+                      cursor: orders.length === 0 ? "not-allowed" : "pointer",
+                      opacity: orders.length === 0 ? 0.6 : 1,
+                    }}
+                  >
+                    {copiedEmails ? <Check size={13} /> : <Copy size={13} />}
+                    {copiedEmails ? "Copied Emails!" : "Copy All Emails"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportCSV}
+                    disabled={orders.length === 0}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "7px 14px",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      backgroundColor: "#FFFFFF",
+                      color: "#0F172A",
+                      fontSize: "0.78rem",
+                      fontWeight: 600,
+                      cursor: orders.length === 0 ? "not-allowed" : "pointer",
+                      opacity: orders.length === 0 ? 0.6 : 1,
+                    }}
+                  >
+                    <Download size={13} />
+                    Export Contacts (CSV)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={loadOrders}
+                    disabled={loadingOrders}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "7px 14px",
+                      borderRadius: "6px",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      backgroundColor: "#FFFFFF",
+                      fontSize: "0.78rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <RefreshCw size={13} className={loadingOrders ? "animate-spin" : ""} />
+                    {loadingOrders ? "Refreshing..." : "Refresh"}
+                  </button>
+                </div>
               </div>
 
               {/* Orders List */}

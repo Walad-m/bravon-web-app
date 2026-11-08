@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, MapPin, Globe, MessageSquare } from "lucide-react";
+import { Mail, MapPin, Globe, MessageSquare, Check } from "lucide-react";
 import BravonLogo from "@/components/BravonLogo";
 import { useSiteConfig } from "@/context/ConfigContext";
 
@@ -11,6 +11,39 @@ export default function Footer() {
   const pathname = usePathname();
   const { config } = useSiteConfig();
   const [isSubdomainOrAdmin, setIsSubdomainOrAdmin] = useState(false);
+  const [subscribeEmail, setSubscribeEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "success" | "error">("idle");
+  const [subscribeMsg, setSubscribeMsg] = useState("");
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!subscribeEmail || !subscribeEmail.includes("@")) return;
+    setSubscribing(true);
+    setSubscribeStatus("idle");
+    setSubscribeMsg("");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: subscribeEmail }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubscribeStatus("success");
+        setSubscribeMsg(data.message || "Thank you for subscribing!");
+        setSubscribeEmail("");
+      } else {
+        setSubscribeStatus("error");
+        setSubscribeMsg(data.error || "Could not subscribe");
+      }
+    } catch {
+      setSubscribeStatus("error");
+      setSubscribeMsg("Connection error");
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -36,6 +69,103 @@ export default function Footer() {
       }}
     >
       <div style={{ maxWidth: "1180px", margin: "0 auto" }}>
+        {/* Minimal Newsletter & Updates Strip */}
+        <div
+          style={{
+            borderBottom: "1px solid rgba(0, 0, 0, 0.08)",
+            paddingBottom: "32px",
+            marginBottom: "36px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "20px",
+          }}
+        >
+          <div>
+            <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "#0F172A", margin: "0 0 4px" }}>
+              Stay updated with Bravon
+            </h4>
+            <p style={{ fontSize: "0.85rem", color: "#64748B", margin: 0 }}>
+              Receive firmware releases, companion app updates, and new label announcements.
+            </p>
+          </div>
+          <form
+            onSubmit={handleSubscribe}
+            style={{
+              display: "flex",
+              gap: "8px",
+              alignItems: "center",
+              flexWrap: "wrap",
+              maxWidth: "400px",
+              width: "100%",
+            }}
+          >
+            {subscribeStatus === "success" ? (
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "0.85rem",
+                  color: "#059669",
+                  fontWeight: 600,
+                  backgroundColor: "#ECFDF5",
+                  border: "1px solid #A7F3D0",
+                  padding: "8px 14px",
+                  borderRadius: "8px",
+                }}
+              >
+                <Check size={14} /> You are subscribed to product updates
+              </div>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  value={subscribeEmail}
+                  onChange={(e) => setSubscribeEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  style={{
+                    flex: 1,
+                    minWidth: "190px",
+                    padding: "9px 14px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(0, 0, 0, 0.12)",
+                    fontSize: "0.88rem",
+                    backgroundColor: "#FFFFFF",
+                    color: "#0F172A",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="submit"
+                  disabled={subscribing}
+                  style={{
+                    padding: "9px 18px",
+                    borderRadius: "8px",
+                    backgroundColor: "#0F172A",
+                    color: "#FFFFFF",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    border: "none",
+                    cursor: subscribing ? "not-allowed" : "pointer",
+                    whiteSpace: "nowrap",
+                    opacity: subscribing ? 0.7 : 1,
+                  }}
+                >
+                  {subscribing ? "Subscribing..." : "Subscribe"}
+                </button>
+              </>
+            )}
+            {subscribeStatus === "error" && (
+              <div style={{ width: "100%", fontSize: "0.78rem", color: "#DC2626", marginTop: "4px" }}>
+                {subscribeMsg}
+              </div>
+            )}
+          </form>
+        </div>
+
         <div className="footer-layout-grid">
           {/* Brand Column */}
           <div className="footer-brand-col">
