@@ -55,6 +55,7 @@ type AdminTab = "orders" | "claims" | "reviews" | "product" | "media" | "hero" |
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [adminEmail, setAdminEmail] = useState("deals@bravoncity.com");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -381,6 +382,9 @@ export default function AdminPage() {
         setTwoFactorEnabled(data.twoFactorEnabled);
         setSessionDays(data.sessionMaxAgeDays || 7);
         setSecurityLogs(data.securityLogs || []);
+        if (data.adminEmail) {
+          setAdminEmail(data.adminEmail);
+        }
       }
     } catch (err) {
       console.error("Failed to load security info:", err);
@@ -396,6 +400,7 @@ export default function AdminPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          email: adminEmail,
           password,
           twoFactorCode: requires2FA ? twoFactorCode : undefined,
         }),
@@ -641,7 +646,7 @@ export default function AdminPage() {
     { id: "store", label: "Store & Contact", icon: Building },
     { id: "commerce", label: "Commerce & Inventory", icon: SlidersHorizontal },
     { id: "env", label: "Environment & API Keys", icon: KeyRound },
-    { id: "security", label: "Security & 2FA", icon: ShieldCheck, badge: twoFactorEnabled ? "2FA On" : undefined },
+    { id: "security", label: "Password & Security", icon: ShieldCheck, badge: twoFactorEnabled ? "2FA On" : undefined },
   ];
 
   // 1. Loading Screen
@@ -718,21 +723,20 @@ export default function AdminPage() {
             )}
 
             {!requires2FA ? (
-              <div>
-                <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>
-                  Admin Password
-                </label>
-                <div style={{ position: "relative" }}>
+              <>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>
+                    Admin Email
+                  </label>
                   <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter password (default: bravon2026)"
+                    type="email"
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                    placeholder="deals@bravoncity.com"
                     required
-                    autoFocus
                     style={{
                       width: "100%",
-                      padding: "10px 36px 10px 12px",
+                      padding: "10px 12px",
                       borderRadius: "8px",
                       border: "1px solid rgba(0, 0, 0, 0.12)",
                       fontSize: "0.9rem",
@@ -741,24 +745,50 @@ export default function AdminPage() {
                       boxSizing: "border-box",
                     }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{
-                      position: "absolute",
-                      right: "10px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "#64748B",
-                    }}
-                  >
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
                 </div>
-              </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>
+                    Admin Password
+                  </label>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter password"
+                      required
+                      autoFocus
+                      style={{
+                        width: "100%",
+                        padding: "10px 36px 10px 12px",
+                        borderRadius: "8px",
+                        border: "1px solid rgba(0, 0, 0, 0.12)",
+                        fontSize: "0.9rem",
+                        color: "#0F172A",
+                        outline: "none",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        color: "#64748B",
+                      }}
+                    >
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+              </>
             ) : (
               <div>
                 <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>

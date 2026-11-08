@@ -14,6 +14,7 @@ export async function GET() {
   const authConfig = await readAuthConfig();
   return NextResponse.json({
     success: true,
+    adminEmail: authConfig.adminEmail || process.env.ADMIN_EMAIL || "deals@bravoncity.com",
     twoFactorEnabled: authConfig.twoFactorEnabled,
     sessionMaxAgeDays: authConfig.sessionMaxAgeDays || 7,
     securityLogs: authConfig.securityLogs || [],
@@ -29,7 +30,12 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { sessionMaxAgeDays, clearLogs } = await req.json();
+    const { sessionMaxAgeDays, clearLogs, adminEmail } = await req.json();
+
+    if (adminEmail && typeof adminEmail === "string" && adminEmail.includes("@")) {
+      await writeAuthConfig({ adminEmail: adminEmail.trim().toLowerCase() });
+      return NextResponse.json({ success: true, message: "Admin login email updated" });
+    }
 
     if (clearLogs) {
       await writeAuthConfig({ securityLogs: [] });

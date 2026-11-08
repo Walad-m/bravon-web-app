@@ -16,6 +16,7 @@ export interface SecurityAuditLog {
 }
 
 export interface AdminAuthConfig {
+  adminEmail?: string;
   passwordHash?: string;
   salt?: string;
   twoFactorEnabled: boolean;
@@ -267,7 +268,8 @@ export async function logSecurityEvent(action: string, detail?: string, ip?: str
 export async function verifyAdminCredentials(
   passwordAttempt: string,
   twoFactorAttempt?: string,
-  ip?: string
+  ip?: string,
+  emailAttempt?: string
 ): Promise<{
   valid: boolean;
   requires2FA?: boolean;
@@ -276,7 +278,17 @@ export async function verifyAdminCredentials(
 }> {
   const config = await readAuthConfig();
 
-  // 1. Check password
+  // 1. Check admin email
+  const expectedEmail = (config.adminEmail || process.env.ADMIN_EMAIL || "deals@bravoncity.com").trim().toLowerCase();
+  if (emailAttempt !== undefined) {
+    const cleanEmail = emailAttempt.trim().toLowerCase();
+    if (cleanEmail !== expectedEmail) {
+      await logSecurityEvent("FAILED_LOGIN_EMAIL", `Invalid admin email attempt: ${cleanEmail}`, ip);
+      return { valid: false, error: "Incorrect admin email or password" };
+    }
+  }
+
+  // 2. Check password
   let passwordMatches = false;
   if (config.passwordHash && config.salt) {
     passwordMatches = verifyPassword(passwordAttempt, config.passwordHash, config.salt);
@@ -287,7 +299,7 @@ export async function verifyAdminCredentials(
 
   if (!passwordMatches) {
     await logSecurityEvent("FAILED_LOGIN_PASSWORD", "Invalid password attempted", ip);
-    return { valid: false, error: "Incorrect admin password" };
+    return { valid: false, error: "Incorrect admin email or password" };
   }
 
   // 2. Check 2FA if enabled

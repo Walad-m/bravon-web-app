@@ -5,7 +5,14 @@ import { createAdminSessionToken } from "@/lib/sessionToken";
 
 export async function POST(req: Request) {
   try {
-    const { password, twoFactorCode } = await req.json();
+    const { email, password, twoFactorCode } = await req.json();
+
+    if (!email || !email.trim()) {
+      return NextResponse.json(
+        { success: false, error: "Admin email is required (e.g. deals@bravoncity.com)" },
+        { status: 400 }
+      );
+    }
 
     if (!password) {
       return NextResponse.json(
@@ -15,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "localhost";
-    const verification = await verifyAdminCredentials(password, twoFactorCode, ip);
+    const verification = await verifyAdminCredentials(password, twoFactorCode, ip, email);
 
     if (verification.requires2FA) {
       return NextResponse.json({
