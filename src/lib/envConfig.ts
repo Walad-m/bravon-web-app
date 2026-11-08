@@ -39,9 +39,29 @@ function maskSecret(val: string): string {
   return `${val.slice(0, 4)}••••••••${val.slice(-4)}`;
 }
 
+function sanitizeEnvSettings(settings: EnvSettings): EnvSettings {
+  const cleaned = { ...settings };
+  // Guard against browser autofill saving admin login passwords into Stripe secret key
+  if (
+    cleaned.stripeSecretKey &&
+    (!cleaned.stripeSecretKey.startsWith("sk_") && !cleaned.stripeSecretKey.startsWith("rk_"))
+  ) {
+    delete cleaned.stripeSecretKey;
+  }
+  // Guard against invalid publishable key
+  if (cleaned.stripePublishableKey && !cleaned.stripePublishableKey.startsWith("pk_")) {
+    delete cleaned.stripePublishableKey;
+  }
+  // Guard against invalid webhook secret
+  if (cleaned.stripeWebhookSecret && !cleaned.stripeWebhookSecret.startsWith("whsec_")) {
+    delete cleaned.stripeWebhookSecret;
+  }
+  return cleaned;
+}
+
 export async function readSavedEnvSettings(): Promise<EnvSettings> {
   if (memoryEnvSettings) {
-    return memoryEnvSettings;
+    return sanitizeEnvSettings(memoryEnvSettings);
   }
 
   // 1. Check Supabase first if available
@@ -56,8 +76,9 @@ export async function readSavedEnvSettings(): Promise<EnvSettings> {
           .single();
 
         if (!error && data?.config) {
-          memoryEnvSettings = data.config as EnvSettings;
-          return memoryEnvSettings;
+          const cleaned = sanitizeEnvSettings(data.config as EnvSettings);
+          memoryEnvSettings = cleaned;
+          return cleaned;
         }
       }
     } catch (err) {
@@ -68,7 +89,7 @@ export async function readSavedEnvSettings(): Promise<EnvSettings> {
   // 2. Check local disk fallback
   try {
     const raw = await fs.readFile(LOCAL_ENV_SETTINGS, "utf-8");
-    const parsed = JSON.parse(raw);
+    const parsed = sanitizeEnvSettings(JSON.parse(raw));
     memoryEnvSettings = parsed;
     return parsed;
   } catch {}
@@ -76,7 +97,7 @@ export async function readSavedEnvSettings(): Promise<EnvSettings> {
   // 3. Check /tmp fallback
   try {
     const raw = await fs.readFile(TMP_ENV_SETTINGS, "utf-8");
-    const parsed = JSON.parse(raw);
+    const parsed = sanitizeEnvSettings(JSON.parse(raw));
     memoryEnvSettings = parsed;
     return parsed;
   } catch {}
@@ -98,25 +119,26 @@ export async function saveEnvSettings(newSettings: Partial<EnvSettings>): Promis
     }
   }
 
-  memoryEnvSettings = merged;
+  const cleaned = sanitizeEnvSettings(merged);
+  memoryEnvSettings = cleaned;
 
   // 1. Sync directly into runtime process.env for instant reactivity
-  if (merged.stripeSecretKey) process.env.STRIPE_SECRET_KEY = merged.stripeSecretKey;
-  if (merged.stripePublishableKey) process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = merged.stripePublishableKey;
-  if (merged.stripeWebhookSecret) process.env.STRIPE_WEBHOOK_SECRET = merged.stripeWebhookSecret;
-  if (merged.appBaseUrl) process.env.NEXT_PUBLIC_BASE_URL = merged.appBaseUrl;
-  if (merged.supabaseUrl) {
-    process.env.NEXT_PUBLIC_SUPABASE_URL = merged.supabaseUrl;
+  if (cleaned.stripeSecretKey) process.env.STRIPE_SECRET_KEY = cleaned.stripeSecretKey;
+  if (cleaned.stripePublishableKey) process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = cleaned.stripePublishableKey;
+  if (cleaned.stripeWebhookSecret) process.env.STRIPE_WEBHOOK_SECRET = cleaned.stripeWebhookSecret;
+  if (cleaned.appBaseUrl) process.env.NEXT_PUBLIC_BASE_URL = cleaned.appBaseUrl;
+  if (cleaned.supabaseUrl) {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = cleaned.supabaseUrl;
     resetSupabaseAdminClient();
   }
-  if (merged.supabaseAnonKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = merged.supabaseAnonKey;
-  if (merged.supabaseServiceRoleKey) {
-    process.env.SUPABASE_SERVICE_ROLE_KEY = merged.supabaseServiceRoleKey;
+  if (cleaned.supabaseAnonKey) process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = cleaned.supabaseAnonKey;
+  if (cleaned.supabaseServiceRoleKey) {
+    process.env.SUPABASE_SERVICE_ROLE_KEY = cleaned.supabaseServiceRoleKey;
     resetSupabaseAdminClient();
   }
-  if (merged.adminSessionSecret) process.env.ADMIN_SESSION_SECRET = merged.adminSessionSecret;
-  if (merged.adminPassword) process.env.ADMIN_PASSWORD = merged.adminPassword;
-  if (merged.printNodeApiKey) process.env.PRINTNODE_API_KEY = merged.printNodeApiKey;
+  if (cleaned.adminSessionSecret) process.env.ADMIN_SESSION_SECRET = cleaned.adminSessionSecret;
+  if (cleaned.adminPassword) process.env.ADMIN_PASSWORD = cleaned.adminPassword;
+  if (cleaned.printNodeApiKey) process.env.PRINTNODE_API_KEY = cleaned.printNodeApiKey;
 
   // 2. Save to Supabase if configured
   if (isSupabaseConfigured()) {
@@ -126,7 +148,7 @@ export async function saveEnvSettings(newSettings: Partial<EnvSettings>): Promis
         await supabase.from("site_config").upsert(
           {
             id: "system_env",
-            config: merged,
+            config: cleaned,
             updated_at: new Date().toISOString(),
           },
           { onConflict: "id" }
@@ -141,7 +163,7 @@ export async function saveEnvSettings(newSettings: Partial<EnvSettings>): Promis
   try {
     const dir = path.dirname(LOCAL_ENV_SETTINGS);
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(LOCAL_ENV_SETTINGS, JSON.stringify(merged, null, 2), "utf-8");
+    await fs.writeFile(LOCAL_ENV_SETTINGS, JSON.stringify(cleaned, null, 2), "utf-8");
   } catch (err) {
     console.warn("Could not write to LOCAL_ENV_SETTINGS:", err);
   }
@@ -150,10 +172,10 @@ export async function saveEnvSettings(newSettings: Partial<EnvSettings>): Promis
   try {
     const dir = path.dirname(TMP_ENV_SETTINGS);
     await fs.mkdir(dir, { recursive: true });
-    await fs.writeFile(TMP_ENV_SETTINGS, JSON.stringify(merged, null, 2), "utf-8");
+    await fs.writeFile(TMP_ENV_SETTINGS, JSON.stringify(cleaned, null, 2), "utf-8");
   } catch {}
 
-  return merged;
+  return cleaned;
 }
 
 export async function getEffectiveEnvList(): Promise<EnvFieldStatus[]> {
@@ -295,7 +317,14 @@ export async function getEffectiveEnvList(): Promise<EnvFieldStatus[]> {
  */
 export async function getDynamicStripeClient(): Promise<Stripe> {
   const saved = await readSavedEnvSettings();
-  const key = saved.stripeSecretKey || process.env.STRIPE_SECRET_KEY || "sk_test_placeholder";
+  const isValid = (k?: string) =>
+    Boolean(k && (k.trim().startsWith("sk_") || k.trim().startsWith("rk_")) && k.trim().length > 20);
+
+  const key =
+    (isValid(saved.stripeSecretKey) ? saved.stripeSecretKey!.trim() : undefined) ||
+    (isValid(process.env.STRIPE_SECRET_KEY) ? process.env.STRIPE_SECRET_KEY!.trim() : undefined) ||
+    "sk_test_placeholder";
+
   return new Stripe(key, {
     apiVersion: "2025-02-24.acacia" as any,
   });
@@ -306,9 +335,14 @@ export async function getDynamicStripeClient(): Promise<Stripe> {
  */
 export async function getDynamicWebhookSecret(): Promise<string | undefined> {
   const saved = await readSavedEnvSettings();
-  const secret = saved.stripeWebhookSecret || process.env.STRIPE_WEBHOOK_SECRET;
-  if (secret && secret.startsWith("whsec_") && !secret.includes("PASTE")) {
-    return secret;
+  const isValid = (s?: string) =>
+    Boolean(s && s.trim().startsWith("whsec_") && !s.includes("PASTE") && s.trim().length > 20);
+
+  if (isValid(saved.stripeWebhookSecret)) {
+    return saved.stripeWebhookSecret!.trim();
+  }
+  if (isValid(process.env.STRIPE_WEBHOOK_SECRET)) {
+    return process.env.STRIPE_WEBHOOK_SECRET!.trim();
   }
   return undefined;
 }

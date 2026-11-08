@@ -264,6 +264,10 @@ export default function EnvSettingsTab({ isMobile }: EnvSettingsTabProps) {
               value={val}
               onChange={(e) => handleValueChange(f.key, e.target.value)}
               placeholder={`Enter ${f.label}...`}
+              autoComplete="new-password"
+              data-lpignore="true"
+              data-1p-ignore="true"
+              name={`bravon_config_${f.key}`}
               style={{
                 width: "100%",
                 padding: "8px 12px",
@@ -398,7 +402,7 @@ export default function EnvSettingsTab({ isMobile }: EnvSettingsTabProps) {
         </div>
       )}
 
-      <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+      <form onSubmit={handleSave} autoComplete="off" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
         {/* SECTION 1: STRIPE PAYMENTS */}
         <div style={{ backgroundColor: "#FFFFFF", borderRadius: "12px", border: "1px solid rgba(0,0,0,0.08)", padding: isMobile ? "18px 14px" : "22px 24px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", marginBottom: "16px" }}>
