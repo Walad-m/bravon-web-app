@@ -82,3 +82,4 @@ export async function writeSubscribers(subscribers: Subscriber[]): Promise<void>
     await fs.writeFile(TMP_PATH, JSON.stringify(subscribers, null, 2), "utf-8");
   } catch {}
 }
+

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { Review, readReviews, writeReviews, computeReviewsStats } from "@/lib/reviews";
 import { readOrders } from "@/lib/orders";
 import { verifyAdminSessionToken } from "@/lib/sessionToken";
+import { isSupabaseConfigured, getSupabaseAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -212,11 +213,22 @@ export async function DELETE(req: NextRequest) {
     const beforeCount = reviews.length;
     reviews = reviews.filter((r) => r.id !== id);
 
-    if (reviews.length === beforeCount) {
-      return NextResponse.json({ success: false, error: "Review not found" }, { status: 404 });
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = getSupabaseAdmin();
+        if (supabase) {
+          await supabase.from("reviews").delete().eq("id", id);
+        }
+      } catch (err) {
+        console.warn("Error deleting review from Supabase:", err);
+      }
     }
 
     await writeReviews(reviews);
+    try {
+      revalidatePath("/product");
+      revalidatePath("/");
+    } catch {}
     const stats = computeReviewsStats(reviews);
 
     return NextResponse.json({

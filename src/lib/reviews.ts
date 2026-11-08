@@ -63,6 +63,18 @@ function mapReviewToSupabase(review: Review): any {
   };
 }
 
+function isDummyTestReview(r: Review): boolean {
+  if (!r) return true;
+  const author = (r.author || "").toLowerCase().trim();
+  const title = (r.title || "").toLowerCase().trim();
+  const id = (r.id || "").toLowerCase().trim();
+  return (
+    id === "rev_1794173472606_hle2" ||
+    author === "random person" ||
+    title === "fake review"
+  );
+}
+
 export async function readReviews(): Promise<Review[]> {
   // 1. Supabase check
   if (isSupabaseConfigured()) {
@@ -75,7 +87,28 @@ export async function readReviews(): Promise<Review[]> {
           .order("created_at", { ascending: false });
 
         if (!error && Array.isArray(data)) {
-          const mapped = data.map(mapSupabaseToReview);
+          // Identify any dummy/test reviews and delete them from Supabase
+          const dummyIds = data
+            .filter(
+              (row: any) =>
+                row.id === "rev_1794173472606_hle2" ||
+                (row.author && row.author.toLowerCase() === "random person") ||
+                (row.title && row.title.toLowerCase() === "fake review")
+            )
+            .map((row: any) => row.id);
+
+          if (dummyIds.length > 0) {
+            try {
+              await supabase.from("reviews").delete().in("id", dummyIds);
+            } catch (delErr) {
+              console.warn("Could not delete dummy reviews from Supabase:", delErr);
+            }
+          }
+
+          const mapped = data
+            .map(mapSupabaseToReview)
+            .filter((r) => !isDummyTestReview(r));
+
           memoryReviews = mapped;
           return mapped;
         } else if (error) {
@@ -90,15 +123,16 @@ export async function readReviews(): Promise<Review[]> {
   // 2. Local fallback
   const isDev = process.env.NODE_ENV !== "production";
   if (!isDev && memoryReviews) {
-    return memoryReviews;
+    return memoryReviews.filter((r) => !isDummyTestReview(r));
   }
 
   try {
     const raw = await fs.readFile(LOCAL_PATH, "utf-8");
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      memoryReviews = parsed;
-      return parsed;
+      const filtered = parsed.filter((r: Review) => !isDummyTestReview(r));
+      memoryReviews = filtered;
+      return filtered;
     }
   } catch {}
 
@@ -106,12 +140,13 @@ export async function readReviews(): Promise<Review[]> {
     const raw = await fs.readFile(TMP_PATH, "utf-8");
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
-      memoryReviews = parsed;
-      return parsed;
+      const filtered = parsed.filter((r: Review) => !isDummyTestReview(r));
+      memoryReviews = filtered;
+      return filtered;
     }
   } catch {}
 
-  return memoryReviews || [];
+  return [];
 }
 
 export async function writeReviews(reviews: Review[]): Promise<boolean> {
