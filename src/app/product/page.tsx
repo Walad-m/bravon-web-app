@@ -33,45 +33,37 @@ export default function ProductPage() {
     }
   }, [config.defaultColor]);
 
-  // Gallery items dynamic based on selected finish
-  const galleryItems = [
+  // Gallery items strictly for the two printer finishes (Dark Slate & Arctic White)
+  const galleryItems: {
+    id: string;
+    color: "white" | "dark";
+    title: string;
+    subtitle: string;
+    src: string;
+  }[] = [
     {
-      id: "hero",
-      title: "Chassis Angle",
-      subtitle: selectedColor === "dark" ? "Dark Slate" : "Arctic White",
-      src:
-        selectedColor === "dark"
-          ? config.productImageDark || "/bravon-pos9260-black.jpg"
-          : config.productImageWhite || "/bravon-pos9260-white.jpg",
+      id: "dark",
+      color: "dark",
+      title: config.darkColorLabel || "Dark Slate",
+      subtitle: "Stealth Matte Finish",
+      src: config.frontFeedImageDark || "/bravon-hero-studio-dark.jpg",
     },
     {
-      id: "front-feed",
-      title: "Front Output",
-      subtitle: selectedColor === "dark" ? "4×6 Dark Feed" : "4×6 White Feed",
-      src:
-        selectedColor === "dark"
-          ? config.frontFeedImageDark || "/bravon-hero-studio-dark.jpg"
-          : config.frontFeedImageWhite || "/bravon-hero-studio-white.jpg",
-    },
-    {
-      id: "desk-setup",
-      title: "Desk Setup",
-      subtitle: "Roll Stand Holder",
-      src: "/bravon-shipping-action-dark-stand.jpg",
-    },
-    {
-      id: "stickers",
-      title: "Custom Stickers",
-      subtitle: "Brand & Circle Seals",
-      src: config.stickerLifestyleImage || "/bravon-stickers-lifestyle.jpg",
-    },
-    {
-      id: "unboxing",
-      title: "In The Box",
-      subtitle: "Complete Kit",
-      src: config.productImageInBox || "/bravon-in-the-box-v3.jpg",
+      id: "white",
+      color: "white",
+      title: config.whiteColorLabel || "Arctic White",
+      subtitle: "Clean Studio Finish",
+      src: config.frontFeedImageWhite || "/bravon-hero-studio-white-v2.jpg",
     },
   ];
+
+  // Keep active gallery index synchronized with selected finish
+  useEffect(() => {
+    const idx = galleryItems.findIndex((item) => item.color === selectedColor);
+    if (idx !== -1 && idx !== activeGalleryIndex) {
+      setActiveGalleryIndex(idx);
+    }
+  }, [selectedColor]);
 
   const currentGalleryItem = galleryItems[activeGalleryIndex] || galleryItems[0];
   const currentPrice = config.price || 100;
@@ -227,68 +219,86 @@ export default function ProductPage() {
                 />
               </div>
 
-              {/* Multi-Angle Interactive Thumbnails Strip */}
+              {/* Two-Printer Interactive Finish Selector Strip */}
               <div
                 className="gallery-thumbnail-strip"
                 style={{
-                  display: "flex",
-                  gap: "8px",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "10px",
                   width: "100%",
                   maxWidth: "100%",
                   marginTop: "16px",
                   paddingTop: "14px",
                   borderTop: "1px solid rgba(0, 0, 0, 0.06)",
-                  overflowX: "auto",
-                  WebkitOverflowScrolling: "touch",
-                  scrollbarWidth: "none",
-                  paddingBottom: "4px",
                   boxSizing: "border-box",
                 }}
               >
                 {galleryItems.map((item, index) => {
-                  const isActive = activeGalleryIndex === index;
+                  const isActive = selectedColor === item.color || activeGalleryIndex === index;
                   return (
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setActiveGalleryIndex(index)}
+                      onClick={() => {
+                        setActiveGalleryIndex(index);
+                        if (item.color) {
+                          setSelectedColor(item.color);
+                        }
+                      }}
                       style={{
-                        flex: "0 0 auto",
-                        minWidth: "74px",
-                        padding: "7px 10px",
-                        borderRadius: "12px",
+                        padding: "10px 14px",
+                        borderRadius: "14px",
                         border: isActive
                           ? "2px solid var(--bravon-purple)"
                           : "1px solid rgba(0, 0, 0, 0.08)",
                         backgroundColor: isActive ? "var(--bravon-purple-subtle)" : "#FAFAFC",
                         cursor: "pointer",
                         display: "flex",
-                        flexDirection: "column",
                         alignItems: "center",
-                        gap: "2px",
+                        gap: "10px",
                         transition: "all 0.2s ease",
+                        boxShadow: isActive ? "0 4px 12px rgba(124, 58, 237, 0.12)" : "none",
+                        textAlign: "left",
                       }}
-                      aria-label={`View ${item.title}`}
+                      aria-label={`Select ${item.title}`}
                     >
                       <span
                         style={{
-                          fontSize: "0.72rem",
-                          fontWeight: 700,
-                          color: isActive ? "var(--bravon-purple)" : "#0F172A",
-                          whiteSpace: "nowrap",
+                          width: "18px",
+                          height: "18px",
+                          borderRadius: "50%",
+                          backgroundColor: item.color === "dark" ? "#2B3245" : "#FFFFFF",
+                          border: item.color === "dark" ? "2px solid rgba(0,0,0,0.2)" : "2px solid #D1D5DB",
+                          display: "inline-block",
+                          flexShrink: 0,
                         }}
-                      >
-                        {item.title}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "0.64rem",
-                          color: "var(--text-secondary)",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.subtitle}
-                      </span>
+                      />
+                      <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+                        <span
+                          style={{
+                            fontSize: "0.82rem",
+                            fontWeight: 700,
+                            color: isActive ? "var(--bravon-purple)" : "#0F172A",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {item.title}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.68rem",
+                            color: "var(--text-secondary)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {item.subtitle}
+                        </span>
+                      </div>
                     </button>
                   );
                 })}
