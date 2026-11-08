@@ -57,6 +57,7 @@ export default function ReviewsSection({
   const [hoverRating, setHoverRating] = useState(0);
   const [formAuthor, setFormAuthor] = useState("");
   const [formRole, setFormRole] = useState("");
+  const [formOrderLookup, setFormOrderLookup] = useState("");
   const [formVariant, setFormVariant] = useState(defaultColor === "dark" ? "Dark Slate" : "Arctic White");
   const [formTitle, setFormTitle] = useState("");
   const [formComment, setFormComment] = useState("");
@@ -111,6 +112,10 @@ export default function ReviewsSection({
       setFormError("Please enter your name.");
       return;
     }
+    if (!formOrderLookup.trim()) {
+      setFormError("Please enter the email address or Order ID used during checkout to verify your purchase.");
+      return;
+    }
     if (!formTitle.trim()) {
       setFormError("Please enter a headline for your review.");
       return;
@@ -132,6 +137,8 @@ export default function ReviewsSection({
           variantPurchased: formVariant,
           title: formTitle,
           comment: formComment,
+          orderEmail: formOrderLookup.trim(),
+          orderId: formOrderLookup.trim(),
         }),
       });
       const data = await res.json();
@@ -144,6 +151,7 @@ export default function ReviewsSection({
           setFormSuccess(false);
           setFormAuthor("");
           setFormRole("");
+          setFormOrderLookup("");
           setFormTitle("");
           setFormComment("");
           setFormRating(5);
@@ -955,6 +963,30 @@ export default function ReviewsSection({
                     <option value="Dark Slate">Dark Slate (Commercial Stealth Matte)</option>
                     <option value="Arctic White">Arctic White (Clean Studio Finish)</option>
                   </select>
+                </div>
+
+                <div style={{ marginBottom: "14px" }}>
+                  <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 600, color: "#334155", marginBottom: "6px" }}>
+                    Order Email or Order ID *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formOrderLookup}
+                    onChange={(e) => setFormOrderLookup(e.target.value)}
+                    placeholder="e.g. your-email@domain.com or checkout order ID"
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      borderRadius: "8px",
+                      border: "1px solid rgba(0,0,0,0.12)",
+                      fontSize: "0.88rem",
+                      outline: "none",
+                    }}
+                  />
+                  <span style={{ fontSize: "0.72rem", color: "#64748B", marginTop: "4px", display: "block" }}>
+                    🔒 Verified Buyer Protection: Required to verify your Bravon printer purchase.
+                  </span>
                 </div>
 
                 <div style={{ marginBottom: "14px" }}>

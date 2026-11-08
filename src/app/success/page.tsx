@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle, Package, Sparkles, Printer, Truck } from "lucide-react";
+import { CheckCircle, Package, Sparkles, Printer, Truck, Star, Send, X, Check } from "lucide-react";
 import Link from "next/link";
 import { useSiteConfig } from "@/context/ConfigContext";
 
@@ -35,6 +35,74 @@ function SuccessContent() {
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const { config } = useSiteConfig();
+
+  // Post-purchase review form states
+  const [reviewAuthor, setReviewAuthor] = useState("");
+  const [reviewRole, setReviewRole] = useState("Verified Buyer");
+  const [reviewVariant, setReviewVariant] = useState("Arctic White");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewHoverRating, setReviewHoverRating] = useState<number | null>(null);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState("");
+  const [reviewDismissed, setReviewDismissed] = useState(false);
+
+  useEffect(() => {
+    if (order) {
+      if (order.customerName) {
+        setReviewAuthor(order.customerName);
+      }
+      if (order.items && order.items[0]?.color) {
+        setReviewVariant(order.items[0].color);
+      }
+    }
+  }, [order]);
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewAuthor.trim()) {
+      setReviewError("Please enter your name");
+      return;
+    }
+    if (!reviewTitle.trim()) {
+      setReviewError("Please enter a short headline");
+      return;
+    }
+    if (!reviewComment.trim()) {
+      setReviewError("Please share a brief comment");
+      return;
+    }
+    setSubmittingReview(true);
+    setReviewError("");
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          author: reviewAuthor.trim(),
+          role: reviewRole.trim() || "Verified Buyer",
+          rating: reviewRating,
+          title: reviewTitle.trim(),
+          comment: reviewComment.trim(),
+          variantPurchased: reviewVariant,
+          orderId: order?.id || sessionId || undefined,
+          orderEmail: order?.customerEmail || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviewSubmitted(true);
+      } else {
+        setReviewError(data.error || "Could not submit review");
+      }
+    } catch {
+      setReviewError("Network error. Please try again.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   useEffect(() => {
     if (!sessionId) return;
@@ -405,6 +473,261 @@ function SuccessContent() {
           </div>
         ))}
       </div>
+
+      {/* Screen-Only: Post-Purchase Verified Review Card */}
+      {!reviewDismissed && (
+        <div
+          className="screen-only"
+          style={{
+            backgroundColor: "#FFFFFF",
+            border: "1px solid rgba(124, 58, 237, 0.2)",
+            borderRadius: "16px",
+            padding: "24px 22px",
+            marginTop: "24px",
+            marginBottom: "24px",
+            textAlign: "left",
+            boxShadow: "0 10px 25px -5px rgba(124, 58, 237, 0.08)",
+          }}
+        >
+          {reviewSubmitted ? (
+            <div style={{ textAlign: "center", padding: "16px 8px" }}>
+              <div
+                style={{
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "50%",
+                  backgroundColor: "#ECFDF5",
+                  border: "2px solid #10B981",
+                  color: "#059669",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "12px",
+                }}
+              >
+                <Check size={28} />
+              </div>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
+                Thank You, {reviewAuthor || "Verified Buyer"}!
+              </h3>
+              <p style={{ fontSize: "0.88rem", color: "#64748B", margin: 0, lineHeight: 1.5 }}>
+                Your verified {reviewRating}-star review has been published to the store. We appreciate your feedback!
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmitReview}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
+                <div>
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", backgroundColor: "#F3E8FF", color: "#7C3AED", padding: "3px 10px", borderRadius: "9999px", fontSize: "0.74rem", fontWeight: 700, marginBottom: "8px" }}>
+                    <Sparkles size={12} /> Verified Buyer Review
+                  </div>
+                  <h3 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#0F172A", margin: "0 0 4px" }}>
+                    How was your ordering experience?
+                  </h3>
+                  <p style={{ fontSize: "0.82rem", color: "#64748B", margin: 0 }}>
+                    Leave quick feedback for the store (or skip if you prefer).
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setReviewDismissed(true)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#94A3B8",
+                    cursor: "pointer",
+                    padding: "4px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  title="Skip review"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {/* Star Rating Selector */}
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", fontSize: "0.78rem", fontWeight: 600, color: "#475569", marginBottom: "6px" }}>
+                  Rating
+                </label>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      onMouseEnter={() => setReviewHoverRating(star)}
+                      onMouseLeave={() => setReviewHoverRating(null)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: "2px",
+                        color: (reviewHoverRating !== null ? star <= reviewHoverRating : star <= reviewRating)
+                          ? "#F59E0B"
+                          : "#CBD5E1",
+                        transition: "color 0.15s ease",
+                      }}
+                    >
+                      <Star size={26} fill={(reviewHoverRating !== null ? star <= reviewHoverRating : star <= reviewRating) ? "#F59E0B" : "none"} />
+                    </button>
+                  ))}
+                  <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#475569", marginLeft: "6px" }}>
+                    {reviewRating} out of 5 stars
+                  </span>
+                </div>
+              </div>
+
+              {/* Prefilled / Editable Details Grid */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>
+                    Your Name (Editable)
+                  </label>
+                  <input
+                    type="text"
+                    value={reviewAuthor}
+                    onChange={(e) => setReviewAuthor(e.target.value)}
+                    placeholder="e.g. John Doe"
+                    required
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      borderRadius: "8px",
+                      border: "1px solid #CBD5E1",
+                      fontSize: "0.85rem",
+                      color: "#0F172A",
+                      boxSizing: "border-box",
+                      outline: "none",
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>
+                    Purchased Finish
+                  </label>
+                  <select
+                    value={reviewVariant}
+                    onChange={(e) => setReviewVariant(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      borderRadius: "8px",
+                      border: "1px solid #CBD5E1",
+                      fontSize: "0.85rem",
+                      color: "#0F172A",
+                      backgroundColor: "#FFFFFF",
+                      boxSizing: "border-box",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="Arctic White">Arctic White</option>
+                    <option value="Dark Slate">Dark Slate</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Review Headline */}
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>
+                  Headline
+                </label>
+                <input
+                  type="text"
+                  value={reviewTitle}
+                  onChange={(e) => setReviewTitle(e.target.value)}
+                  placeholder="e.g. Super clean design, prints labels in seconds!"
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #CBD5E1",
+                    fontSize: "0.85rem",
+                    color: "#0F172A",
+                    boxSizing: "border-box",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              {/* Review Comment */}
+              <div style={{ marginBottom: "16px" }}>
+                <label style={{ display: "block", fontSize: "0.76rem", fontWeight: 600, color: "#475569", marginBottom: "4px" }}>
+                  Your Review
+                </label>
+                <textarea
+                  rows={3}
+                  value={reviewComment}
+                  onChange={(e) => setReviewComment(e.target.value)}
+                  placeholder="Share details about print speed, label setup, or checkout experience..."
+                  required
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #CBD5E1",
+                    fontSize: "0.85rem",
+                    color: "#0F172A",
+                    boxSizing: "border-box",
+                    outline: "none",
+                    resize: "vertical",
+                  }}
+                />
+              </div>
+
+              {reviewError && (
+                <div style={{ padding: "8px 12px", borderRadius: "8px", backgroundColor: "#FEF2F2", color: "#DC2626", fontSize: "0.8rem", marginBottom: "12px" }}>
+                  {reviewError}
+                </div>
+              )}
+
+              {/* Submit & Skip Actions */}
+              <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "flex-end" }}>
+                <button
+                  type="button"
+                  onClick={() => setReviewDismissed(true)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#64748B",
+                    fontSize: "0.85rem",
+                    padding: "8px 14px",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                  }}
+                >
+                  Skip for now
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingReview}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    backgroundColor: "#7C3AED",
+                    color: "#FFFFFF",
+                    fontSize: "0.85rem",
+                    fontWeight: 600,
+                    padding: "9px 18px",
+                    borderRadius: "8px",
+                    border: "none",
+                    cursor: submittingReview ? "not-allowed" : "pointer",
+                    boxShadow: "0 2px 6px rgba(124, 58, 237, 0.3)",
+                    opacity: submittingReview ? 0.7 : 1,
+                  }}
+                >
+                  <Send size={14} />
+                  {submittingReview ? "Submitting..." : "Submit Verified Review"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
 
       {/* Screen-Only: Action Buttons */}
       <div

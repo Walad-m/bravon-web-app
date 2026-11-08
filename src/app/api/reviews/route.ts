@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { Review, readReviews, writeReviews, computeReviewsStats } from "@/lib/reviews";
+import { readOrders } from "@/lib/orders";
 import { verifyAdminSessionToken } from "@/lib/sessionToken";
 
 export const dynamic = "force-dynamic";
@@ -34,7 +35,61 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { author, role, rating, title, comment, variantPurchased } = body;
+    const { author, role, rating, title, comment, variantPurchased, orderId, orderEmail } = body;
+
+    // Security & Authenticity Check: Only verified buyers or authenticated admins can submit reviews
+    const cookieStore = await cookies();
+    const session = cookieStore.get("bravon_admin_session");
+    const isAdmin = verifyAdminSessionToken(session?.value);
+
+    let isVerifiedPurchase = false;
+
+    if (!isAdmin) {
+      const orders = await readOrders();
+      let matched = null;
+
+      if (orderId && typeof orderId === "string") {
+        matched = orders.find(
+          (o) =>
+            o.id.toLowerCase() === orderId.toLowerCase() ||
+            (o.paymentIntentId && o.paymentIntentId.toLowerCase() === orderId.toLowerCase())
+        );
+      }
+
+      if (!matched && orderEmail && typeof orderEmail === "string") {
+        matched = orders.find(
+          (o) =>
+            o.customerEmail &&
+            o.customerEmail.toLowerCase().trim() === orderEmail.toLowerCase().trim()
+        );
+      }
+
+      // Fallback: If session id from Stripe checkout
+      if (!matched && orderId && typeof orderId === "string" && orderId.startsWith("cs_")) {
+        try {
+          const { getDynamicStripeClient } = await import("@/lib/envConfig");
+          const stripe = await getDynamicStripeClient();
+          const stripeSession = await stripe.checkout.sessions.retrieve(orderId);
+          if (stripeSession && stripeSession.payment_status === "paid") {
+            matched = stripeSession;
+          }
+        } catch {}
+      }
+
+      if (!matched) {
+        return NextResponse.json(
+          {
+            success: false,
+            error:
+              "Only verified buyers who completed an order can submit a review. Please use the review option on your order confirmation page.",
+          },
+          { status: 403 }
+        );
+      }
+      isVerifiedPurchase = true;
+    } else {
+      isVerifiedPurchase = true;
+    }
 
     if (!author || typeof author !== "string" || !author.trim()) {
       return NextResponse.json({ success: false, error: "Reviewer name is required" }, { status: 400 });
@@ -56,14 +111,14 @@ export async function POST(req: NextRequest) {
     const newReview: Review = {
       id: `rev_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       author: author.trim(),
-      role: role && typeof role === "string" ? role.trim() : "Verified Merchant",
+      role: role && typeof role === "string" ? role.trim() : "Verified Buyer",
       rating: Math.round(numRating),
       title: title.trim(),
       comment: comment.trim(),
       date: new Date().toISOString().split("T")[0],
-      verified: true,
+      verified: isVerifiedPurchase,
       helpfulCount: 0,
-      status: "approved", // Auto-approved by default for instant feedback
+      status: "approved", // Auto-approved for verified purchasers
       isFeatured: false,
       variantPurchased: variantPurchased || "Dark Slate",
     };
